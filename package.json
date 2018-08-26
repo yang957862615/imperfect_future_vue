@@ -25,7 +25,7 @@
     "js-cookie": "^2.2.0",
     "js-md5": "^0.7.3",
     "mavon-editor": "^2.6.15",
-    "nuxt": "^1.4.1",
+    "nuxt": "latest",
     "vue-countupjs": "^1.0.0",
     "vue-infinite-loading": "^2.3.1",
     "vue-lazyload": "^1.2.3",
