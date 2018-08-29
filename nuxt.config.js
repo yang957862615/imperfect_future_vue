@@ -66,17 +66,25 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    filenames: {
+      vendor: 'vendor.[hash].js',
+      app: 'app.[chunkhash].js'
+    },
     /*
     ** Run ESLint on save
     */
     extend(config, {isDev, isClient}) {
+      // 为 客户端打包 进行扩展配置
+      if (isClient) {
+        config.devtool = 'eval-source-map'
+      }
       if (isDev && isClient) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /(node_modules)/
-        })
+        });
       }
     },
     vendor: [
@@ -87,7 +95,8 @@ module.exports = {
       'vue-countupjs',
       'vue-multiple-back-top'
     ],
-    maxChunkSize: 350000,
+    // 下面这一句导致了很大问题 一直报错webpackJsonp is not defined
+    // maxChunkSize: 350000,
     // 为 JS 和 Vue 文件定制 babel 配置。https://nuxtjs.org/api/configuration-build/#analyze
     babel: {
       presets: ['es2015', 'stage-2'],
