@@ -1,5 +1,5 @@
 const isProdMode = Object.is(process.env.NODE_ENV, 'prod');
 
 module.exports = {
-  baseURL: 'http://localhost:9999/'
+  baseURL: isProdMode ? 'https://api.joegreens.cn/' : 'http://127.0.0.0:9999/'
 };
