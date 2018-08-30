@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const apiConfig = require('./api.config');
-const isProdMode = Object.is(process.env.NODE_ENV, 'prod');
 
 module.exports = {
   /*
@@ -107,7 +106,7 @@ module.exports = {
       comments: true
     },
   },
-  dev: isProdMode,
+  dev: (process.env.NODE_ENV !== 'production'),
   env: {
     baseUrl: apiConfig.baseURL
   },

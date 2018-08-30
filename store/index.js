@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Axios from '~/plugins/Axios';
 import {setToken, unsetToken, getToken} from "~/utils/auth.js"
-
+const isProdMode = Object.is(process.env.NODE_ENV, 'production');
 const cookieparser = require('cookieparser');
 
 /**
