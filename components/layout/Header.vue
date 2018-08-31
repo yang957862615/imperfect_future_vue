@@ -175,7 +175,7 @@
         let wsuri = "";
         const apiUrl = `${api.baseURL}`;
         if (apiUrl.indexOf("https://") > -1) {
-          wsuri = `ws://${api.baseURL.replace("https://", "")}/webSocket/${userId}`;
+          wsuri = `wss://${api.baseURL.replace("https://", "")}/webSocket/${userId}`;
         } else if (apiUrl.indexOf("http://") > -1) {
           wsuri = `ws://${api.baseURL.replace("http://", "")}/webSocket/${userId}`;
         }
