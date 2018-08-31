@@ -172,7 +172,12 @@
           return;
         }
         // 初始化msgList
-        const wsuri = `wss://${api.baseURL.replace("http://" || "https://", "")}/webSocket/${userId}`;
+        let wsuri = "";
+        if (`${api.baseURL}.indexOf("https://")`) {
+          wsuri = `ws://${api.baseURL.replace("https://", "")}/webSocket/${userId}`;
+        } else if (`${api.baseURL}.indexOf("http://")`) {
+          wsuri = `ws://${api.baseURL.replace("http://", "")}/webSocket/${userId}`;
+        }
         // 这里面的this都指向vue
         this.webSocket = new WebSocket(wsuri);
         this.webSocket.onopen = this.webSocketOpen;
