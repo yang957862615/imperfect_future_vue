@@ -76,7 +76,7 @@
                 :src="loggedUser ? loggedUser.headImg : ''"
                 alt="头像"
                 class="rounded-circle"
-                style="max-width: 40px;"
+                style="width: 40px; height: 40px;"
               >
               <!--{{loggedUser ? loggedUser.username : ''}}-->
             </nuxt-link>
@@ -126,6 +126,10 @@
       },
       unReadMsgCount() {
         return this.$store.state.message.newMsgs.list.length;
+      },
+      userInfo() {
+        // 该用户基本信息
+        return this.$store.state.user.articles.userInfo;
       }
     },
     watch: {
@@ -192,7 +196,7 @@
       },
       webSocketOnMessage(e) {
         // 接收消息
-        console.log("服务器推送消息：", e.data);
+        //console.log("服务器推送消息：", e.data);
         if (!!e) {
           this.$store.commit("message/USER_NEW_MSGS", e.data);
         }

@@ -28,7 +28,7 @@ export const actions = {
     // 官方示例https://nuxtjs.org/examples/auth-external-jwt/
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie);
-      console.log('parsed:', parsed.token);
+      //console.log('parsed:', parsed.token);
       let accessToken = parsed.token;
       if (!!accessToken) {
         // 切记一定要返回promise
@@ -36,8 +36,10 @@ export const actions = {
           // 加载用户信息
           store.dispatch("redisUserInfo", accessToken)
         ]).catch(err => {
-          console.log('err:', err);
-        })
+          console.log('加载用户信息错误err:', err);
+          // 如果token已过期则删除token以免一直去查redis然后一直报错
+          unsetToken();
+        });
       }
     }
   },
@@ -50,6 +52,9 @@ export const actions = {
         if (success && !!res.data.ob) {
           commit("message/USER_NEW_MSGS", "newMsg");
         }
+      }).catch(err => {
+        console.log('加载用户没有在线时的消息错误err:', err);
+        return Promise.reject("加载用户没有在线时的消息错误");
       })
     }
   },
@@ -87,7 +92,8 @@ export const actions = {
         }
       }
     }).catch(err => {
-      console.log('加载消息err:', err);
+      console.log('加载用户消息错误err:', err);
+      return Promise.reject("加载用户消息错误");
     });
   },
   // 加载用户通知
@@ -125,6 +131,7 @@ export const actions = {
       }
     }).catch(err => {
       console.log('加载消息err:', err);
+      return Promise.reject("加载消息错误");
     });
   },
   // 用户是否点赞某篇文章
@@ -159,7 +166,7 @@ export const actions = {
         }
       }).catch(err => {
         console.log('获取文章信息err:', err);
-        commit("/article/ARTICLE_INFO", data);
+        commit("article/ARTICLE_INFO", data);
       });
     }
   },
@@ -175,7 +182,7 @@ export const actions = {
         }
       }).catch(err => {
         console.log('检查是否关注err:', err);
-        Promise.reject("检查是否关注err:" + err);
+        return Promise.reject("检查是否关注err:" + err);
       });
     }
   },
@@ -189,7 +196,7 @@ export const actions = {
       }
     }).catch(err => {
       console.log('加载评论err:', err);
-      Promise.reject("加载评论err:" + err);
+      return Promise.reject("加载评论err:" + err);
     });
   },
   // 用户登录
@@ -232,7 +239,7 @@ export const actions = {
   },
   // 获取redis里的用户信息
   redisUserInfo({commit}, params = null) {
-    console.log('redisUserInfo执行+1');
+    //console.log('redisUserInfo执行+1');
     const token = getToken() ? getToken() : params;
     return Axios({
       method: 'get',
@@ -272,7 +279,7 @@ export const actions = {
           }
         }
       } else {
-        Promise.reject(res.data.info);
+        return Promise.reject(res.data.info);
       }
     }).catch((error) => {
       console.log('加载已关注人列表error:', error);
@@ -301,7 +308,7 @@ export const actions = {
           }
         }
       } else {
-        Promise.reject(res.data.info);
+        return Promise.reject(res.data.info);
       }
     }).catch((error) => {
       console.log('加载收藏文章列表error:', error);
@@ -330,7 +337,7 @@ export const actions = {
           }
         }
       } else {
-        Promise.reject(res.data.info);
+        return Promise.reject(res.data.info);
       }
     }).catch((error) => {
       console.log('加载文章列表error:', error);
@@ -372,7 +379,7 @@ export const actions = {
           }
         }
       } else {
-        Promise.reject(res.data.info);
+        return Promise.reject(res.data.info);
       }
     }).catch(error => {
       console.log('加载文章列表error:', error);
@@ -389,7 +396,7 @@ export const actions = {
         // 一定要抛出异常才能被下面的catch捕获
         return Promise.reject(res.data.info);
       }
-    }).catch((error) => {
+    }).catch(error => {
       // 要reject出去要不然页面上捕捉不到错误
       console.log('加载文章详情error:', error);
       return Promise.reject("加载文章详情error: " + error);
@@ -401,11 +408,11 @@ export const actions = {
       if (res.data.state && Object.is(res.data.state, 200)) {
         commit("category/LOAD_CATEGORIES", res.data.ob);
       } else {
-        Promise.reject(res.data.info);
+        return Promise.reject(res.data.info);
       }
-    }).catch((err) => {
+    }).catch(err => {
       console.log('加载文章分类error:', err);
-      Promise.reject("加载文章分类error: " + err);
+      return Promise.reject("加载文章分类error: " + err);
     });
   },
   // 上传文章封面
@@ -419,11 +426,11 @@ export const actions = {
       if (res.data.error === 0) {
         commit("article/ARTICLE_COVER_URL", res.data.url);
       } else {
-        Promise.reject(res.data.message);
+        return Promise.reject(res.data.message);
       }
-    }).catch((err) => {
+    }).catch(err => {
       console.log("上传图片错误: ", err);
-      Promise.reject("上传图片错误: " + err);
+      return Promise.reject("上传图片错误: " + err);
     });
   }
 };

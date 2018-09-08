@@ -125,10 +125,17 @@
         this.categoryId = e.target.value;
       },
       uploadCover(file) { // 上传封面
+        let index = layer.load(1, {
+          shade: [0.1,'#fff'] //0.1透明度的白色背景
+        });
         this.$store.dispatch('uploadArticleCover', file).then(res => {
-          layer.msg("封面上传成功~", {time: 1000, icon: 1});
+          layer.msg("封面上传成功~", {time: 1000, icon: 1},function () {
+            layer.close(index);
+          });
         }).catch(err => {
-          layer.msg("封面上传失败", {time: 1500, icon: 8});
+          layer.msg("封面上传失败", {time: 1500, icon: 8},function () {
+            layer.close(index);
+          });
         });
       },
       addArticle(value, render) { // 文章内容
@@ -192,7 +199,7 @@
            * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
            * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
            */
-          console.log('评论组件上传图片res.data.url:', res.data.url);
+          //console.log('评论组件上传图片res.data.url:', res.data.url);
           this.$refs.md.$img2Url(pos, res.data.url);
         })
       },
@@ -212,14 +219,14 @@
           imgUrl: this.getCoverSrc || (msg = '封面不能为空'),
           content: this.articleContent || (msg = '内容不能为空')
         };
-        console.log('发布文章的article参数:', article);
+        //console.log('发布文章的article参数:', article);
         if (msg != null) {
           layer.msg(msg, {time: 800, icon: 2});
           return false;
         }
         let router = this.$router;
         Axios.post("/article/", article).then((res) => {
-          console.log('res:', res);
+          //console.log('res:', res);
           if (res.data.state === 200) {
             layer.msg("文章发布成功~", {time: 800, icon: 1}, function () {
               router.push({path: "/"});

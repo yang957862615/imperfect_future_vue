@@ -3,12 +3,12 @@
     <h1 class="text-center">登录</h1>
     <div class="form-group">
       <span>用户名</span>
-      <input type="text" ref="username" class="form-control" placeholder="请输入用户名">
+      <input type="text" autocomplete="username" ref="username" class="form-control" placeholder="请输入用户名">
       <small class="form-text text-danger">{{msg1}}</small>
     </div>
     <div class="form-group">
       <span>密码</span>
-      <input type="password" ref="password" class="form-control" placeholder="请输入密码">
+      <input type="password" autocomplete="current-password" ref="password" class="form-control" placeholder="请输入密码">
       <small class="form-text text-danger">{{msg2}}</small>
     </div>
     <button class="btn btn-primary btn-block" @click="loginUp">登录</button>

@@ -1,5 +1,31 @@
 <template>
   <div role="main">
+    <div class="container" ref="cropperContainer" style="display: none;">
+      <div>
+        <vue-cropper
+          style="height: 300px;"
+          ref="cropper"
+          :img="imgCropper.img"
+          :autoCrop="imgCropper.autoCrop"
+          :autoCropWidth="imgCropper.autoCropWidth"
+          :autoCropHeight="imgCropper.autoCropHeight"
+          :fixedBox="imgCropper.fixedBox"
+          :outputSize="imgCropper.size"
+          :outputType="imgCropper.outputType"
+          :full="imgCropper.full"
+          :canMove="imgCropper.canMove"
+          :canMoveBox="imgCropper.canMoveBox"
+          :original="imgCropper.original"
+          :centerBox="imgCropper.centerBox"
+          :info="true"
+        >
+        </vue-cropper>
+      </div>
+      <div class="btn-group-sm text-center mt-2 mb-2">
+        <button type="button" class="btn btn-primary" @click="confirmCropper">确认</button>
+        <button type="button" class="btn btn-primary" @click="cancelCropper">取消</button>
+      </div>
+    </div>
     <section class="jumbotron text-center">
       <div class="container">
         <img
@@ -7,8 +33,8 @@
           :src="userInfo ? userInfo.headImg : ''"
           alt="头像"
           class="rounded-circle mb-2"
-          style="max-width: 100px;min-width: 100px;"
-        >
+          style="width: 150px;height: 150px;"
+        />
         <img
           v-if="myself"
           :src="userInfo ? userInfo.headImg : ''"
@@ -16,8 +42,8 @@
           class="rounded-circle mb-2"
           id="avatar"
           @click="changeHeadImg()"
-          style="max-width: 100px;min-width: 100px;"
-        >
+          style="width: 150px;height: 150px;"
+        />
         <h1 class="jumbotron-heading">{{userInfo ? userInfo.username : ''}}</h1>
         <p class="lead text-muted" v-if="!modifier">
           {{userInfo ? userInfo.desc : ''}}
@@ -63,11 +89,21 @@
       <div class="tab-content" id="nav-tabContent">
         <div v-show="viewType===1" class="tab-pane fade show active">
           <!--用户发布的文章 瀑布流布局-->
-          <ArticleList :articleList="articleList" @infiniteHandler="infiniteHandler" :viewChange="this.viewType"></ArticleList>
+          <ArticleList
+            :articleList="articleList"
+            @infiniteHandler="infiniteHandler"
+            :viewChange="this.viewType"
+          >
+          </ArticleList>
         </div>
         <div v-show="viewType===2" class="tab-pane fade show active">
           <!--用户收藏的文章 瀑布流布局-->
-          <ArticleList :articleList="favorArticleList" @infiniteHandler="infiniteHandler" :viewChange="this.viewType"></ArticleList>
+          <ArticleList
+            :articleList="favorArticleList"
+            @infiniteHandler="infiniteHandler"
+            :viewChange="this.viewType"
+          >
+          </ArticleList>
         </div>
         <div v-show="viewType===3" class="pl-3 tab-pane fade show active">
           <!--已关注的用户-->
@@ -102,14 +138,14 @@
               <span slot="no-more">
                 没有更多数据啦 :(
               </span>
-              <span slot="no-results">
+            <span slot="no-results">
                 没有更多数据啦 :(
               </span>
           </infinite-loading>
         </div>
       </div>
     </div>
-    <!--如果未登录-->
+    <!--如果未登录或者不是自己的主页就只显示文章-->
     <div v-if="!loggedUser || !myself">
       <!--文章 瀑布流布局-->
       <ArticleList :articleList="articleList" @infiniteHandler="infiniteHandler"></ArticleList>
@@ -119,14 +155,15 @@
       type="file"
       id="upload"
       class="invisible"
-      accept="image/png,image/gif,image/jpeg"
-      @change="uploadFile"
+      accept="image/png, image/jpeg, image/gif, image/jpg"
+      @change="cropperImage"
     >
   </div>
 </template>
 
 <script>
   import Axios from '~/plugins/Axios';
+  import {getToken} from "~/utils/auth.js"
   import ArticleList from '~/components/views/article/ArticleList';
   // 上拉加载插件
   import InfiniteLoading from 'vue-infinite-loading/src/components/InfiniteLoading.vue';
@@ -140,7 +177,21 @@
         // 修改个性签名
         modifier: false,
         desc: '',
-        viewType: 1
+        viewType: 1,
+        imgCropper: {
+          img: '',
+          autoCrop: true,
+          autoCropWidth: 200,
+          autoCropHeight: 200,
+          fixedBox: true,
+          size: 1,
+          full: false,
+          outputType: 'png',
+          canMove: true,
+          original: false,
+          canMoveBox: false,
+          centerBox: true
+        }
       }
     },
     // middleware: 'authenticated',
@@ -155,7 +206,9 @@
       let loadParams = {userId: params.id};
       let followedId = params.id;
       const promises = [];
+      // 加载用户文章
       const userIndexArticles = store.dispatch('userIndexArticles', loadParams);
+      // 加载用户基本信息
       const userIndexInfo = store.dispatch('userIndexInfo', loadParams);
       promises.push(userIndexArticles, userIndexInfo);
       if (store.getters.isAuthenticated) {
@@ -169,7 +222,7 @@
         const favorArticles = store.dispatch("userFavorArticles", {userId});
         // 已关注人列表
         const followedUsers = store.dispatch("userFollowedUsers", {userId});
-        promises.push(favorArticles,followedUsers);
+        promises.push(favorArticles, followedUsers);
       }
       return Promise.all(promises).catch(err =>
         error({statusCode: 500, message: err})
@@ -246,62 +299,49 @@
         document.getElementById("upload").click();
       },
       // 修改头像
-      uploadFile(e) {
-        const file = e.target;
-        const filePath = file.value;
-        const filePic = file.files[0];
-        const store = this.$store.getters;
+      uploadFile(blob) {
+        let index = layer.load(1, {
+          shade: [0.1,'#fff'] //0.1透明度的白色背景
+        });
+        const store = this.$store;
         const router = this.$router;
-        if (filePath) {
-          //读取图片数据
-          let reader = new FileReader();
-          reader.onload = function (e) {
-            let data = e.target.result;
-            //加载图片获取图片真实宽度和高度
-            let image = new Image();
-            image.onload = function () {
-              let width = image.width;
-              let height = image.height;
-              if (width > 300 || height > 300) {
-                layer.msg("头像尺寸应为：300*300！", {time: 1500, icon: 8});
-                file.value = "";
-              } else {
-                // 上传头像
-                let config = { //添加请求头
-                  headers: {'Content-Type': 'multipart/form-data'}
-                };
-                let param = new FormData(); //创建form对象
-                param.append('file', filePic, filePic.name);//通过append向form对象添加数据
-                return Axios.post("/pic/upload", param, config).then(res => {
-                  if (res.data.error === 0) {
-                    // 修改用户头像路径
-                    Axios.post("/user/userInfo", {userId: store.loggedUser.userId, headImg: res.data.url}).then(res => {
-                      if (res.data && Object.is(res.data.state, 200)) {
-                        // 刷新页面
-                        router.go(0);
-                      } else {
-                        layer.msg("上传头像错误", {time: 1200, icon: 2});
-                      }
-                    }).catch(err => {
-                      console.log("上传头像错误: ", err);
-                      layer.msg("上传头像错误", {time: 1200, icon: 2});
-                    });
-                  } else {
-                    layer.msg("上传头像错误", {time: 1200, icon: 2});
-                  }
-                }).catch(err => {
-                  console.log("上传头像错误: ", err);
-                  layer.msg("上传头像错误", {time: 1200, icon: 2});
-                });
-              }
-            };
-            image.src = data;
+        if (blob) {
+          // 上传头像
+          let config = { //添加请求头
+            headers: {'Content-Type': 'multipart/form-data'},
+            withCredentials: true
           };
-          reader.readAsDataURL(filePic);
+          let param = new FormData(); //创建form对象
+          param.append('file', blob,new Date().getTime() + ".png");//通过append向form对象添加数据
+          return Axios.post("/pic/upload", param, config).then(res => {
+            if (res.data.error === 0) {
+              // 修改用户头像路径
+              Axios.post(`/user/${getToken()}/userInfo`, {userId: store.getters.loggedUser.userId, headImg: res.data.url}).then(res1 => {
+                if (res1.data && Object.is(res1.data.state, 200)) {
+                  // 刷新页面
+                  router.go(0);
+                } else {
+                  layer.close(index);
+                  layer.msg("上传头像错误", {time: 1200, icon: 2});
+                }
+              }).catch(err => {
+                layer.close(index);
+                console.log("上传头像错误: ", err);
+                layer.msg("上传头像错误", {time: 1200, icon: 2});
+              });
+            } else {
+              layer.close(index);
+              layer.msg("上传头像错误", {time: 1200, icon: 2});
+            }
+          }).catch(err => {
+            layer.close(index);
+            console.log("上传头像错误: ", err);
+            layer.msg("上传头像错误", {time: 1200, icon: 2});
+          });
         }
       },
       showChangeInput() {
-        // 显示修改框
+        // 显示个性签名修改框
         this.modifier = true;
       },
       // 修改个性签名
@@ -309,7 +349,7 @@
         let desc = this.$refs.desc;
         //去掉所有的html标记
         const newDesc = desc.value.replace(/<[^>]+>/g, "");
-        console.log('newDesc:', newDesc);
+        //console.log('newDesc:', newDesc);
         const store = this.$store.getters;
         const router = this.$router;
         return Axios.post("/user/userInfo", {userId: store.loggedUser.userId, desc: newDesc}).then(res => {
@@ -363,6 +403,46 @@
             layer.msg("取消关注错误", {time: 1500, icon: 8});
           })
         }
+      },
+      cropperImage (e) {
+        // 显示剪裁框
+        this.$refs.cropperContainer.style.display = 'block';
+        // 剪裁图片
+        let file = e.target.files[0];
+        if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
+          alert('图片类型必须是.gif,jpeg,jpg,png,bmp中的一种');
+          return false;
+        }
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          let data;
+          if (typeof e.target.result === 'object') {
+            // 把Array Buffer转化为blob 如果是base64不需要
+            data = window.URL.createObjectURL(new Blob([e.target.result]))
+          } else {
+            data = e.target.result;
+          }
+          this.imgCropper.img = data;
+        };
+        // 转化为base64
+        // reader.readAsDataURL(file)
+        // 转化为blob
+        reader.readAsArrayBuffer(file)
+      },
+      confirmCropper() {
+        // 确认截取
+        // 获取截图的blob数据
+        this.$refs.cropper.getCropBlob(data => {
+          this.uploadFile(data)
+        });
+      },
+      cancelCropper() {
+        // 取消截取
+        this.$refs.cropper.clearCrop();
+        this.$refs.cropper.stopCrop();
+        this.imgCropper.img = '';
+        // 隐藏剪裁框
+        this.$refs.cropperContainer.style.display = 'none';
       }
     }
   }

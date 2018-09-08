@@ -1,34 +1,44 @@
 <template>
-  <div class="container article" style="">
+  <div class="article">
     <div class="row">
-      <div class="cover" style="opacity: 1">
-        <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="">
+      <div class="cover">
+        <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
-    <div class="row" style="">
-      <div class="article_title" style="word-break: break-all;">
-        <p>{{articleDetails.title}}</p>
-      </div>
-      <div class="category" style="">
-        <p>
-          {{articleDetails.author}} ·
-          {{timestampConvert(articleDetails.createTime)}} ·
-          {{articleDetails.categoryName}}
-        </p>
-        <div class="info">
-          <span class="fa fa-eye mr-3"> {{articleInfo.readCount}}</span>
-          <span class="fa fa-comments mr-3"> {{articleInfo.commentCount}}</span>
-          <span v-if="favNum === 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{articleInfo.favorCount}}</span>
-          <span v-if="favNum > 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{parseInt(articleInfo.favorCount)+1}}</span>
-          <span class="fa fa-heart" @click.once="favor" v-show="didFavor === false"> {{articleInfo.favorCount}}</span>
+    <div class="container">
+      <div class="article-info">
+        <div class="article-title">
+          <p>{{articleDetails.title}}</p>
+        </div>
+        <div class="category">
+          <div>
+            {{articleDetails.author}} ·
+            {{timestampConvert(articleDetails.createTime)}} ·
+            {{articleDetails.categoryName}}
+          </div>
+          <div class="info mt-2">
+            <span class="fa fa-eye mr-3"> {{articleInfo.readCount}}</span>
+            <span class="fa fa-comments mr-3"> {{articleInfo.commentCount}}</span>
+            <span v-if="favNum === 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{articleInfo.favorCount}}</span>
+            <span v-if="favNum > 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{parseInt(articleInfo.favorCount)+1}}</span>
+            <span
+              class="fa fa-heart"
+              @click.once="favor"
+              v-show="didFavor === false"
+            >
+                {{articleInfo.favorCount}}
+              </span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row mt-5">
-      <div class="markdown-body" v-html="articleDetails.content"></div>
-    </div>
-    <div class="row">
+      <div class="article-content">
+        <div class="row ">
+          <div class="markdown-body" v-html="articleDetails.content"></div>
+        </div>
+      </div>
+      <div class="row">
         <ArticleComment></ArticleComment>
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +50,7 @@
   import Axios from '~/plugins/Axios.js'
 
   export default {
+    scrollToTop: true,
     validate({params}) { // 检测路由参数
       return params.id && !isNaN(Number(params.id));
     },
@@ -123,5 +134,19 @@
 </script>
 
 <style>
-
+  /*电脑端*/
+  @media  (min-width: 999px) {
+    /*给图片添加蒙版遮罩让文字更突出*/
+    .article .cover:after {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(11, 11, 11, 0.23);
+      content: attr(data-text);
+      color: #FFF;
+    }
+  }
 </style>

@@ -24,12 +24,17 @@
     "cross-env": "^5.1.5",
     "js-cookie": "^2.2.0",
     "js-md5": "^0.7.3",
-    "mavon-editor": "^2.6.15",
+    "mavon-editor": "^2.6.17",
     "nuxt": "latest",
+    "vue": "latest",
+    "vue-core-image-upload": "^2.4.11",
     "vue-countupjs": "^1.0.0",
+    "vue-cropper": "^0.3.6",
     "vue-infinite-loading": "^2.3.1",
     "vue-lazyload": "^1.2.3",
-    "vue-multiple-back-top": "^1.0.2"
+    "vue-multiple-back-top": "^1.0.2",
+    "vue-server-renderer": "latest",
+    "vue-template-compiler": "latest"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

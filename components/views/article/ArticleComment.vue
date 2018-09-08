@@ -221,7 +221,7 @@
         };
         // 判断是否为回复
         const isReply = this.replyIndex >= 0 && !!this.replyUser && !!this.replyContent;
-        console.log('isReply:', isReply);
+        //console.log('isReply:', isReply);
         if (isReply) {
           if (isReply && !!this.parentId) {
             comment.parentId = this.parentId;
@@ -230,10 +230,10 @@
             comment.replyCommentId = this.replyCommentId;
           }
         }
-        console.log('comment:', comment);
+        //console.log('comment:', comment);
         const router = this.$router;
         Axios.post("/comment/", comment).then(res => {
-          console.log('res:', res);
+          //console.log('res:', res);
           if (res.data.state && Object.is(res.data.state, 200)) {
             layer.msg("评论成功", {time: 1000, icon: 6});
             router.go(0);
@@ -245,6 +245,10 @@
       },
       // 绑定@imgAdd event
       $imgAdd(pos, $file) {
+        if (!this.$store.getters.isAuthenticated) {
+          layer.msg("请先登录", {time: 1000, icon: 8});
+          return false;
+        }
         // 绑定@imgAdd event markdown组件上传图片
         // 第一步.将图片上传到服务器.
         let formdata = new FormData();
@@ -261,7 +265,7 @@
            * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
            * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
            */
-          console.log('评论组件上传图片res.data.url:', res.data.url);
+          //console.log('评论组件上传图片res.data.url:', res.data.url);
           this.$refs.md.$img2Url(pos, res.data.url);
         })
       },

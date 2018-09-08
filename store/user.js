@@ -15,8 +15,9 @@ export const state = () => {
       list: [],
       currentPage: 0
     },
+    // 是否已经关注用户
     followed: false,
-    // 点赞文章
+    // 是否已经点赞文章
     didFavor: false
   }
 };

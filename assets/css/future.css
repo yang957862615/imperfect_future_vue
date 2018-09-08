@@ -166,26 +166,32 @@ div#columns small a {
   line-height: 86px;
 }
 
-/*上传组件美化 copy 数字尾巴- 结束*/
+/*上传组件美化 copied from 数字尾巴 --结束--*/
 
-/*文章页面样式 开始*/
+/*文章页面样式 --开始--*/
 .article {
   margin-bottom: 200px;
   position: relative;
-  padding-top: 15px;
   overflow-x: hidden;
 }
 
 .article .cover {
-  box-shadow: 0 15px 15px 0 rgba(15, 37, 64, 0.10);
-  max-width: 100%;
-  min-width: 100%;
+  width: 100%;
   height: auto;
   text-align: center;
   border-radius: 5px;
+  position: relative;
 }
 
-.article .article_title {
+.article .article-info {
+  color: #FFFFFF;
+  position: absolute;
+  padding: 10px;
+  top: 6rem;
+}
+
+.article .article-title {
+  word-break: break-all;
   top: 6rem;
   font-size: 5em;
   font-weight: bold;
@@ -196,14 +202,7 @@ div#columns small a {
   font-size: 2em;
 }
 
-.article .article_title, .article .category {
-  position: absolute;
-  padding: 10px;
-  color: #FFFFFF;
-  left: 3rem;
-}
-
-.article .article_title:hover {
+.article .article-title:hover {
   -webkit-animation: neon1 1.5s ease-in-out infinite alternate;
   -moz-animation: neon1 1.5s ease-in-out infinite alternate;
   animation: neon1 1.5s ease-in-out infinite alternate;
@@ -223,6 +222,11 @@ div#columns small a {
   text-align: center;
 }
 
+.article .article-content {
+  margin-top: 15px;
+  padding: 5px;
+}
+
 /*markdown插件点击全屏预览图片*/
 /*.v-note-img-wrapper img {
   max-width: 60% !important;
@@ -233,7 +237,7 @@ div#columns small a {
   margin-top: 80px;
 }
 
-/*评论*/
+/*评论区*/
 .comment img {
   max-width: 50%;
   margin-top: 5px;
@@ -244,39 +248,35 @@ div#columns small a {
   float: right;
 }
 
+/*手机端*/
 @media screen and (max-width: 999px) {
   /*header优化*/
-  .header-post,.header-msg,.header-user {
+  .header-post, .header-msg, .header-user {
     display: inline-block;
   }
 
-  .article {
-    padding: 30px;
+  /*文章页面*/
+  .article .article-info {
+    color: #000000b3;
+  }
+  .article .article-info,.article .article-content {
+    position: relative;
+    top: 2rem;
   }
 
-  .article .article_title, .article .category {
-    left: 1.5rem;
-    right: 1rem;
-  }
-
-  .article .article_title {
-    position: absolute;
-    font-size: 2.5em;
-    top: 5rem;
+  .article .article-title {
+    font-size: 2.3em;
   }
 
   .article .category {
-    font-size: 0.8em;
-    position: absolute;
+    font-size: 1em;
   }
 
-  .article .category .info {
-    position: absolute;
-    bottom: -2px;
+  .article .info {
+    display: block;
   }
-
   .article .category .info > span {
-    font-size: 12px;
+    font-size: 0.8em;
   }
 
   .v-note-img-wrapper img {
@@ -297,6 +297,20 @@ div#columns small a {
   .comment .comment-desc {
     max-width: 90%;
   }
+
+  /*手机端首页滚动大图*/
+  .carousel-inner {
+    height: 300px;
+  }
+
+  .carousel-inner img {
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(14, 21, 47, 0.25);
+    width: 1920px;
+    height: 300px;
+  }
+
+  /*手机端首页滚动大图 结束*/
 }
 
 /*代码块优化*/

@@ -92,7 +92,8 @@ module.exports = {
       'vue-lazyload',
       'vue-infinite-loading',
       'vue-countupjs',
-      'vue-multiple-back-top'
+      'vue-multiple-back-top',
+      'vue-cropper'
     ],
     // 下面这一句导致了很大问题 一直报错webpackJsonp is not defined
     // maxChunkSize: 350000,
@@ -114,6 +115,7 @@ module.exports = {
     {src: '~/plugins/mavonEditor.js', ssr: false},
     {src: '~/plugins/vueLazyload.js', ssr: false},
     {src: '~/plugins/CountUp.js', ssr: false},
-    {src: '~/plugins/backTop.js', ssr: false}
+    {src: '~/plugins/backTop.js', ssr: false},
+    {src: '~/plugins/vueImageCropper.js', ssr: false}
   ]
 };
