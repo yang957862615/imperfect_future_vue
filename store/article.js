@@ -36,6 +36,9 @@ export const mutations = {
   ARTICLE_COVER_URL(state, data) {
     state.cover.url = data;
   },
+  CLEAR_ARTICLE_COVER_URL(state) {
+    state.cover.url = null;
+  },
   CLEAR_ALL(state) {
     state.articles.list = [];
     state.articles.currentPage = 0;

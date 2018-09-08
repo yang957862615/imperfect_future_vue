@@ -80,6 +80,7 @@
           <textarea class="form-control" v-model="replyContent" disabled></textarea>
         </div>
         <mavon-editor
+          class="v-note-wrapper markdown-body"
           style="min-height: 400px;min-width: 100%;"
           ref=md
           :toolbars="toolbars"

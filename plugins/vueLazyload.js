@@ -2,8 +2,7 @@
 // import with ES6
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
-import loading from '../assets/img/loading4.gif'
-import error from '../assets/img/error.png'
+import loading from '../assets/img/loading3.gif'
 import errorSvg from '../assets/svg/Error.svg'
 
 Vue.use(VueLazyload, {

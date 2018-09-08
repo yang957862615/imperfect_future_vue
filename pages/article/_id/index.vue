@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="container">
-      <div class="article-info">
+      <div class="article-info border-bottom">
         <div class="article-title">
           <p>{{articleDetails.title}}</p>
         </div>

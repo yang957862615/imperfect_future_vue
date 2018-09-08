@@ -6,6 +6,7 @@
           class="custom-select"
           style="font-size: 1.2em"
           @change="selectCategory"
+          title=""
         >
           <option selected>选择分类</option>
           <option
@@ -34,6 +35,7 @@
     </ArticleImgUpload>
     <div>
       <mavon-editor
+        class="v-note-wrapper markdown-body"
         style="min-height: 600px;min-width: 100%;"
         @change="addArticle"
         @fullScreen="fullScreen"
@@ -126,14 +128,14 @@
       },
       uploadCover(file) { // 上传封面
         let index = layer.load(1, {
-          shade: [0.1,'#fff'] //0.1透明度的白色背景
+          shade: [0.1, '#fff'] //0.1透明度的白色背景
         });
         this.$store.dispatch('uploadArticleCover', file).then(res => {
-          layer.msg("封面上传成功~", {time: 1000, icon: 1},function () {
+          layer.msg("封面上传成功~", {time: 1000, icon: 1}, function () {
             layer.close(index);
           });
         }).catch(err => {
-          layer.msg("封面上传失败", {time: 1500, icon: 8},function () {
+          layer.msg("封面上传失败", {time: 1500, icon: 8}, function () {
             layer.close(index);
           });
         });
@@ -225,10 +227,12 @@
           return false;
         }
         let router = this.$router;
+        let store = this.$store;
         Axios.post("/article/", article).then((res) => {
           //console.log('res:', res);
           if (res.data.state === 200) {
             layer.msg("文章发布成功~", {time: 800, icon: 1}, function () {
+              store.commit("article/CLEAR_ARTICLE_COVER_URL");
               router.push({path: "/"});
             });
           }
