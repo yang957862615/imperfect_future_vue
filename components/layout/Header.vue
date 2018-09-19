@@ -6,7 +6,8 @@
           <span class="fa fa-grav mr-2"></span>
           <strong>FUTURE IMPERFECT</strong>
         </nuxt-link>
-        <button class="navbar-toggler" type="button" id="head_menu" data-toggle="collapse"
+        <button class="navbar-toggler" type="button" id="head_menu"
+                data-toggle="collapse"
                 data-target="#navbarsExampleDefault"
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon">
@@ -65,10 +66,9 @@
               </span>
             </nuxt-link>
           </div>
-          <div class="header-user dropdown btn-group-sm" v-show="loggedUser">
+          <div class="header-user dropdown btn-group-sm" id="header_u" v-show="loggedUser">
             <nuxt-link
               class="dropdown-toggle font-weight-bold"
-              id="header_u"
               :to="{path: `/user/${loggedUser ? loggedUser.userId : ''}`}"
             >
               <!--&nbsp;&nbsp;<span class="fa fa-user-circle-o"></span>-->
@@ -80,7 +80,7 @@
               >
               <!--{{loggedUser ? loggedUser.username : ''}}-->
             </nuxt-link>
-            <div class="dropdown-menu bg-secondary" id="hello2">
+            <div class="dropdown-menu bg-secondary" id="dropdown-menu">
               <nuxt-link class="dropdown-item"
                          :to="{path: `/user/${loggedUser ? loggedUser.userId : ''}`}">
                 <span>
@@ -93,8 +93,8 @@
                 <span class="fa fa-star"></span>
                 我的收藏
               </nuxt-link>
-                <nuxt-link class="dropdown-item"
-                           :to="{path: `/user/${loggedUser ? loggedUser.userId : ''}`}">
+              <nuxt-link class="dropdown-item"
+                         :to="{path: `/user/${loggedUser ? loggedUser.userId : ''}`}">
                 <span class="fa fa-user-plus"></span>
                 我的关注
               </nuxt-link>
@@ -147,16 +147,41 @@
       if (!!loggedUser && !Object.is(loggedUser.userId, null)) {
         this.initWebSocket(loggedUser.userId);
       }
-      document.getElementById("header_u").onmouseenter = function () {
-        document.getElementById("hello2").style.cssText = "display: block;";
+      // 头像
+      let headerImg = document.getElementById("header_u");
+      // 头像下拉菜单(pc和mobile)
+      let menu = document.getElementById("dropdown-menu");
+      // 顶部下拉菜单按钮(mobile)
+      let headMenu = document.getElementById("head_menu");
+      // 移动端顶部下拉菜单(mobile)
+      let header = document.getElementById("navbarsExampleDefault");
+      // ---pc端header使用鼠标移动事件---
+      headerImg.onmouseenter = function () {
+        menu.classList.add("show");
       };
-      document.getElementById("hello2").onmouseleave = function () {
-        document.getElementById("hello2").style.cssText = "display: none;";
+      headerImg.onmouseleave = function () {
+        menu.classList.remove("show");
       };
-      document.getElementById("head_menu").onclick = function () {
-        document.getElementById("hello2").style.cssText = "display: none;";
+      menu.onmouseenter = function () {
+        menu.classList.add("show");
       };
-      // TODO 优化dropdown
+      menu.onmouseleave = function () {
+        menu.classList.remove("show");
+      };
+      // ---移动端时候点击事件---
+      headerImg.onclick = function () {
+        menu.classList.toggle("show");
+      };
+      // 增加全局事件监听
+      document.onclick = function () {
+        let e = window.event;
+        let aim = e.target;
+        // 如果点击的不是header、menu、headerImg其中的任何一个则隐藏这些部件。
+        if (aim !== header && aim !== menu && aim !== headerImg) {
+          header.classList.remove("show");
+          menu.classList.remove("show");
+        }
+      }
     },
     methods: {
       signOff() {
