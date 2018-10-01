@@ -28,14 +28,14 @@ module.exports = {
     ],
     link: [
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
-      {rel: 'stylesheet', href: 'https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css'},
-      {rel: 'stylesheet', href: 'https://cdn.bootcss.com/animate.css/3.5.2/animate.css'},
-      {rel: 'stylesheet', href: 'https://cdn.bootcss.com/layer/3.1.0/theme/default/layer.css'}
+      {rel: 'stylesheet', href: 'https://lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.css'},
+      {rel: 'stylesheet', href: 'https://lib.baomitu.com/animate.css/3.7.0/animate.css'},
+      {rel: 'stylesheet', href: 'https://lib.baomitu.com/layer/3.1.1/theme/default/layer.css'}
     ],
     script: [
-      {src: 'https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js'},
-      {src: 'https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js'},
-      {src: 'https://cdn.bootcss.com/layer/3.1.0/layer.js'}
+      {src: 'https://lib.baomitu.com/jquery/3.3.1/jquery.js'},
+      {src: 'https://lib.baomitu.com/twitter-bootstrap/4.0.0/js/bootstrap.js'},
+      {src: 'https://lib.baomitu.com/layer/3.1.1/layer.js'}
     ]
   },
   css: [
