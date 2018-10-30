@@ -224,7 +224,7 @@ div#columns small a {
 
 .article .article-content {
   margin-top: 15px;
-  padding: 5px;
+  padding: inherit;
 }
 
 /*markdown插件点击全屏预览图片*/
