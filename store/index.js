@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Axios from '~/plugins/Axios';
 import {setToken, unsetToken, getToken} from "~/utils/auth.js"
+
 const isProdMode = Object.is(process.env.NODE_ENV, 'production');
 const cookieparser = require('cookieparser');
 
@@ -417,20 +418,76 @@ export const actions = {
   },
   // 上传文章封面
   uploadArticleCover({commit}, file) {
-    let config = { //添加请求头
-      headers: {'Content-Type': 'multipart/form-data'}
-    };
-    let param = new FormData(); //创建form对象
-    param.append('file', file, file.name);//通过append向form对象添加数据
-    return Axios.post("/pic/upload", param, config).then((res) => {
-      if (res.data.error === 0) {
-        commit("article/ARTICLE_COVER_URL", res.data.url);
-      } else {
-        return Promise.reject(res.data.message);
+    //判断支不支持FileReader
+    if (!file || !window.FileReader) return;
+    //创建一个reader
+    let reader = new FileReader();
+    //将图片转成base64格式
+    reader.readAsDataURL(file);
+    //读取成功后的回调
+    reader.onloadend = function () {
+      let result = this.result;
+      let img = new Image();
+      img.src = result;
+      console.log("********未压缩前的图片大小********" + result.length);
+      img.onload = function () {
+        let data = compress(img);
+        let blob = dataURItoBlob(data);
+        let config = {
+          // 添加请求头
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        let param = new FormData();
+        // 创建form对象 通过append向form对象添加数据
+        param.append('file', blob, file.name);
+        return Axios.post("/pic/upload", param, config).then((res) => {
+          if (res.data.error === 0) {
+            commit("article/ARTICLE_COVER_URL", res.data.url);
+          } else {
+            return Promise.reject(res.data.message);
+          }
+        }).catch(err => {
+          console.log("上传图片错误: ", err);
+          return Promise.reject("上传图片错误: " + err);
+        });
       }
-    }).catch(err => {
-      console.log("上传图片错误: ", err);
-      return Promise.reject("上传图片错误: " + err);
-    });
+    };
+
+    // 照片压缩
+    function compress(img) {
+      let canvas = document.createElement("canvas");
+      let ctx = canvas.getContext("2d");
+      let initSize = img.src.length;
+      let width = img.width;
+      let height = img.height;
+      canvas.width = width;
+      canvas.height = height;
+      // 铺底色
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, width, height);
+      //进行最小压缩
+      let ndata = canvas.toDataURL("image/jpeg", 0.5);
+      console.log("*******压缩后的图片大小*******" + ndata.length);
+      // console.log(ndata)
+      return ndata;
+    }
+
+    // base64转成bolb对象
+    function dataURItoBlob(base64Data) {
+      let byteString;
+      if (base64Data.split(",")[0].indexOf("base64") >= 0)
+        byteString = atob(base64Data.split(",")[1]);
+      else byteString = unescape(base64Data.split(",")[1]);
+      let mimeString = base64Data
+        .split(",")[0]
+        .split(":")[1]
+        .split(";")[0];
+      let ia = new Uint8Array(byteString.length);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ia], {type: mimeString});
+    }
   }
 };

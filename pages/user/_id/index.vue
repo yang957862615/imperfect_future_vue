@@ -184,7 +184,7 @@
           autoCropWidth: 200,
           autoCropHeight: 200,
           fixedBox: true,
-          size: 1,
+          size: 0.5,
           full: false,
           outputType: 'png',
           canMove: true,
@@ -297,11 +297,13 @@
       },
       changeHeadImg() { // 点击修改头像
         document.getElementById("upload").click();
+        // 避免缩小图片时页面滚动，此时需要禁止页面滚动
+        document.body.classList.add("no-overflow");
       },
       // 修改头像
       uploadFile(blob) {
         let index = layer.load(1, {
-          shade: [0.1,'#fff'] //0.1透明度的白色背景
+          shade: [0.1, '#fff'] //0.1透明度的白色背景
         });
         const store = this.$store;
         const router = this.$router;
@@ -312,11 +314,12 @@
             withCredentials: true
           };
           let param = new FormData(); //创建form对象
-          param.append('file', blob,new Date().getTime() + ".png");//通过append向form对象添加数据
+          param.append('file', blob, new Date().getTime() + ".png");//通过append向form对象添加数据
           return Axios.post("/pic/upload", param, config).then(res => {
             if (res.data.error === 0) {
               // 修改用户头像路径
-              Axios.post(`/user/${getToken()}/userInfo`, {userId: store.getters.loggedUser.userId, headImg: res.data.url}).then(res1 => {
+              Axios.post(`/user/${getToken()}/userInfo`,
+                {userId: store.getters.loggedUser.userId, headImg: res.data.url}).then(res1 => {
                 if (res1.data && Object.is(res1.data.state, 200)) {
                   // 刷新页面
                   router.go(0);
@@ -352,7 +355,7 @@
         //console.log('newDesc:', newDesc);
         const store = this.$store.getters;
         const router = this.$router;
-        return Axios.post("/user/userInfo", {userId: store.loggedUser.userId, desc: newDesc}).then(res => {
+        return Axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, desc: newDesc}).then(res => {
           if (res.data && Object.is(res.data.state, 200)) {
             router.go(0);
           } else {
@@ -404,7 +407,7 @@
           })
         }
       },
-      cropperImage (e) {
+      cropperImage(e) {
         // 显示剪裁框
         this.$refs.cropperContainer.style.display = 'block';
         // 剪裁图片
@@ -443,6 +446,10 @@
         this.imgCropper.img = '';
         // 隐藏剪裁框
         this.$refs.cropperContainer.style.display = 'none';
+        // 允许上传同一张照片
+        document.getElementById("upload").value = "";
+        // 避免缩小图片时页面滚动，此时需要禁止页面滚动 --> 允许滚动
+        document.body.classList.remove("no-overflow");
       }
     }
   }
@@ -453,5 +460,9 @@
     opacity: 0.6;
     color: #fff;
     background: rgba(0, 0, 0, 0.8);
+  }
+
+  .no-overflow {
+    overflow: hidden;
   }
 </style>

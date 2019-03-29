@@ -158,18 +158,18 @@
       },
       addTag(e) { // 添加标签
         if (Object.is(this.tags.length, 5)) {
-          layer.msg("最多添加5个标签哦~", {time: 800, icon: 5});
+          layer.msg("最多添加5个标签~", {time: 800, icon: 5});
           return false;
         }
         let tag = e.target.value.trim();
         let correct = /^[a-zA-Z]|[\u4e00-\u9fa5]+$/.test(tag);
         if (!correct) {
-          layer.msg("标签只支持英文和汉字哦~", {time: 1000, icon: 5});
+          layer.msg("标签只支持英文和汉字~", {time: 1000, icon: 5});
           return false;
         }
         if (!tag) return false;
         if (this.tags.includes(tag)) {
-          layer.msg("标签不能重复哦~", {time: 800, icon: 2});
+          layer.msg("标签不能重复~", {time: 800, icon: 2});
           return false;
         }
         // 插入标签

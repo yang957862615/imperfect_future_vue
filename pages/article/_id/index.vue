@@ -2,6 +2,7 @@
   <div class="article">
     <div class="row">
       <div class="cover">
+<!--        <div class="img-fluid background" :style="{'background-image': 'url('+articleDetails.imgUrl+')'}"></div>-->
         <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
@@ -135,7 +136,7 @@
 
 <style>
   /*电脑端*/
-  @media  (min-width: 999px) {
+  @media (min-width: 999px) {
     /*给图片添加蒙版遮罩让文字更突出*/
     .article .cover:after {
       position: absolute;
@@ -145,8 +146,26 @@
       width: 100%;
       height: 100%;
       background-color: rgba(11, 11, 11, 0.23);
+      /*background-color: rgba(255, 255, 255, 0);*/
+      /*background-color: rgba(155, 143, 143, 0.19);*/
       content: attr(data-text);
       color: #FFF;
     }
+
+    /*.background {
+      width: 100%;
+      height: 800px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }*/
+  }
+  /*手机端*/
+  @media (max-width: 999px) {
+    /*.background {
+      width: 100%;
+      height: 400px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }*/
   }
 </style>

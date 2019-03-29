@@ -77,10 +77,12 @@
       }
     },
     methods: {
-      tagsArray(tags) { // 多个tag时用逗号分割
+      tagsArray(tags) {
+        // 多个tag时会用逗号分割，此时需要拆分。
         return tags.split(",");
       },
-      timeDifference(time) { // 计算时间差
+      timeDifference(time) {
+        // 计算时间差
         return timeDifference(time);
       },
       scrollToMore($state) {
