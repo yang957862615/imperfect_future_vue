@@ -46,14 +46,14 @@
         />
         <h1 class="jumbotron-heading">{{userInfo ? userInfo.username : ''}}</h1>
         <p class="lead text-muted" v-if="!modifier">
-          {{userInfo ? userInfo.desc : ''}}
+          {{userInfo ? userInfo.description : ''}}
           <a href="javascript:;" @click="showChangeInput()" v-if="myself">
             <span class="fa fa-pencil"></span>
           </a>
         </p>
         <!--点击修改后显示此-->
         <div class="lead" v-if="modifier">
-          <input type="text" class="form-control" ref="desc" :value="userInfo ? userInfo.desc : ''" title="个性签名">
+          <input type="text" class="form-control" ref="desc" :value="userInfo ? userInfo.description : ''" title="个性签名">
           <div class="btn-group">
             <button class="btn btn-primary btn-block mt-2" @click="changeDesc()">提交</button>
             <button class="btn btn-primary btn-block mt-2" @click="modifier = false">取消</button>
@@ -121,7 +121,7 @@
               <figcaption>
                 <div class="card-body">
                   <p class="card-text">
-                    {{user.desc}}
+                    {{user.description}}
                   </p>
                   <div class="d-flex justify-content-between mt-3">
                     <small class="text-muted">
@@ -134,7 +134,7 @@
               </figcaption>
             </figure>
           </div>
-          <infinite-loading ref="infiniteLoading" @infinite="infiniteHandler">
+          <infinite-loading :identifier="infiniteId" ref="infiniteLoading" @infinite="infiniteHandler">
               <span slot="no-more">
                 没有更多数据啦 :(
               </span>
@@ -176,7 +176,7 @@
       return {
         // 修改个性签名
         modifier: false,
-        desc: '',
+        description: '',
         viewType: 1,
         imgCropper: {
           img: '',
@@ -191,7 +191,8 @@
           original: false,
           canMoveBox: false,
           centerBox: true
-        }
+        },
+        infiniteId: +new Date()
       }
     },
     // middleware: 'authenticated',
@@ -266,9 +267,10 @@
       changeType(type) {
         this.viewType = type;
         // 切换tab时重置loading组件
-        this.$nextTick(() => {
+        this.infiniteId += 1;
+        /*this.$nextTick(() => {
           this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
-        });
+        });*/
       },
       // 加载所有文章
       scrollToMoreArticles(pageNo, $state) {
@@ -355,7 +357,7 @@
         //console.log('newDesc:', newDesc);
         const store = this.$store.getters;
         const router = this.$router;
-        return Axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, desc: newDesc}).then(res => {
+        return Axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, description: newDesc}).then(res => {
           if (res.data && Object.is(res.data.state, 200)) {
             router.go(0);
           } else {

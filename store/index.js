@@ -47,7 +47,7 @@ export const actions = {
   // 加载用户没有在线时的消息
   userNotOnlineMsgs({commit}, params) {
     if (!!params) {
-      let url = `/userMsg/${params.userId}/userNotOnlineMsgs`;
+      let url = `/message/${params.userId}/userNotOnlineMsgs`;
       return Axios.get(url).then(res => {
         let success = res.data && Object.is(res.data.state, 200);
         if (success && !!res.data.ob) {
@@ -67,9 +67,9 @@ export const actions = {
     let isSent = Object.is(params.type, "sent");
     let loadAll = params.pageNo === 1;
     if (isSent) {
-      msgUrl = loadAll ? `/userMsg/${params.userId}/userSentComments` : `/userMsg/${params.userId}/userSentComments?pageNo=${params.pageNo}`;
+      msgUrl = loadAll ? `/message/${params.userId}/userSentComments` : `/message/${params.userId}/userSentComments?pageNo=${params.pageNo}`;
     } else {
-      msgUrl = loadAll ? `/userMsg/${params.userId}/userReceivedComments` : `/userMsg/${params.userId}/userReceivedComments?pageNo=${params.pageNo}`
+      msgUrl = loadAll ? `/message/${params.userId}/userReceivedComments` : `/message/${params.userId}/userReceivedComments?pageNo=${params.pageNo}`
     }
     return Axios.get(msgUrl).then(res => {
       let success = res.data && Object.is(res.data.state, 200);
@@ -105,9 +105,9 @@ export const actions = {
     let isSys = Object.is(params.type, "sys");
     let loadAll = params.pageNo === 1;
     if (isSys) {
-      msgUrl = loadAll ? `/userMsg/${params.userId}/sys` : `/userMsg/${params.userId}/sys?pageNo=${params.pageNo}`;
+      msgUrl = loadAll ? `/message/${params.userId}/sys` : `/message/${params.userId}/sys?pageNo=${params.pageNo}`;
     } else {
-      msgUrl = loadAll ? `/userMsg/${params.userId}/sub` : `/userMsg/${params.userId}/sub?pageNo=${params.pageNo}`
+      msgUrl = loadAll ? `/message/${params.userId}/sub` : `/message/${params.userId}/sub?pageNo=${params.pageNo}`
     }
     return Axios.get(msgUrl).then(res => {
       let success = res.data && Object.is(res.data.state, 200);
@@ -174,7 +174,7 @@ export const actions = {
   // 检查是否关注
   checkFollowed({commit}, params) {
     if (params && params.userId && params.followedId) {
-      return Axios.get(`/follow/${params.userId}/${params.followedId}`).then(res => {
+      return Axios.get(`/friend/${params.userId}/${params.followedId}`).then(res => {
         if (res && Object.is(res.data.state, 200) && Object.is(res.data.ob, "已关注")) {
           commit("user/CLEAR_USER_FOLLOWED");
           commit("user/USER_FOLLOWED", true);
@@ -199,6 +199,10 @@ export const actions = {
       console.log('加载评论err:', err);
       return Promise.reject("加载评论err:" + err);
     });
+  },
+  // 往store中插入新评论，目的：不刷新页面展示新评论
+  newComment({commit}, comment) {
+    commit("comment/NEW_ARTICLE_COMMENT", comment);
   },
   // 用户登录
   userLoginUp({commit}, params) {
@@ -347,7 +351,7 @@ export const actions = {
   },
   // 用户首页基本信息
   userIndexInfo({commit}, params) {
-    return Axios.get(`/user/${params.userId}`).then(res => {
+    return Axios.get(`/user/${params.userId}/userInfo`).then(res => {
       const success = res.data.state && Object.is(res.data.state, 200);
       if (success) {
         commit("user/USER_INDEX_INFO", res.data.ob);

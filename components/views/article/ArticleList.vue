@@ -38,7 +38,7 @@
         </figcaption>
       </figure>
     </div>
-    <infinite-loading ref="infiniteLoading" @infinite="scrollToMore">
+    <infinite-loading :identifier="infiniteId" ref="infiniteLoading" @infinite="scrollToMore">
       <span slot="no-more">
         没有更多数据啦 :(
       </span>
@@ -57,6 +57,11 @@
 
   export default {
     name: "ArticleList",
+    data() {
+      return {
+        infiniteId: +new Date()
+      }
+    },
     props: {
       articleList: {
         type: Array
@@ -71,9 +76,10 @@
     watch: {
       viewChange() {
         // 切换tab时重置loading组件
-        this.$nextTick(() => {
+        this.infiniteId += 1;
+        /*this.$nextTick(() => {
           this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
-        });
+        });*/
       }
     },
     methods: {

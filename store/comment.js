@@ -14,6 +14,9 @@ export const mutations = {
     state.comments.currentPage = data.current;
     state.comments.pages = data.pages;
   },
+  NEW_ARTICLE_COMMENT(state, data) {
+    state.comments.list.push(data);
+  },
   CLEAR_COMMENT_LIST(state) {
     state.comments.list = [];
     state.comments.currentPage = 0;

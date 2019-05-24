@@ -19,21 +19,38 @@
                     {{mySelf(comment.userId) ? '我' : comment.commentUserName}} ·
                   </nuxt-link>
                   <span class="font-weight-light text-info badge">
-                  {{timestampConvert(comment.createTime)}} ·
-                </span>
+                    {{timestampConvert(comment.createTime)}}
+                    <span class="mt-2" v-if="comment.replyUserName" style="color: rgba(138, 139, 150, 0.53);">
+                      ·
+                      <a
+                        :href="`#c${Number(comment.replyIndex) > 0 ? Number(comment.replyIndex)-1 : comment.replyIndex}`">
+                        回复#{{comment.replyIndex}}
+                      </a>
+                      <nuxt-link :to="`/user/${comment.parentId}`">
+                        @{{mySelf(comment.parentId) ? '我' : comment.replyUserName}}
+                      </nuxt-link>
+                    </span>
+                    <span class="mt-2" v-else-if="comment.parentId" style="color: rgba(138, 139, 150, 0.53);">
+                      ·
+                      <a
+                        :href="`#c${Number(comment.replyIndex) > 0 ? Number(comment.replyIndex)-1 : comment.replyIndex}`">
+                        回复了#{{comment.replyIndex}}
+                      </a>
+                    </span>
+                  </span>
                   <a class="font-weight-light text-info badge"
                      href="#editor" @click="replyComment(comment,index)">
                     <span class="fa fa-mail-reply"> 回复</span></a>
                   <span class="ml-2 text-info badge comment-index">#{{index}}</span>
                 </div>
-                <div class="mt-2" v-if="comment.replyUserName" style="color: rgba(138, 139, 150, 0.53);">
-                  <nuxt-link :to="`/user/${comment.userId}`">
-                    回复@{{mySelf(comment.userId) ? '我' : comment.replyUserName}}
-                  </nuxt-link>
+                <!--<div class="mt-2" v-if="comment.replyUserName" style="color: rgba(138, 139, 150, 0.53);">
                   <a :href="`#c${Number(comment.replyIndex) > 0 ? Number(comment.replyIndex)-1 : comment.replyIndex}`">
-                    #{{comment.replyIndex}}
+                    回复#{{comment.replyIndex}}
                   </a>
-                </div>
+                  <nuxt-link :to="`/user/${comment.parentId}`">
+                    @{{mySelf(comment.parentId) ? '我' : comment.replyUserName}}
+                  </nuxt-link>
+                </div>-->
                 <div
                   class="mt-2"
                   v-html="comment.content"
@@ -50,7 +67,7 @@
             <a
               class="page-link"
               href="javascript:;"
-              @click="commentsPageTurning(comments.currentPage-1)">
+              @click="commentsNextPage(comments.currentPage-1)">
               上一页
             </a>
           </li>
@@ -59,14 +76,14 @@
             v-for="(page,index) in comments.pages"
             :key="index"
           >
-            <a class="page-link" href="javascript:;" @click="commentsPageTurning(page)">{{page}}</a>
+            <a class="page-link" href="javascript:;" @click="commentsNextPage(page)">{{page}}</a>
           </li>
           <li
             :class="[comments.currentPage===comments.pages ? 'page-item disabled' : 'page-item']">
             <a
               class="page-link"
               href="javascript:;"
-              @click="commentsPageTurning(comments.currentPage+1)"
+              @click="commentsNextPage(comments.currentPage+1)"
             >
               下一页
             </a>
@@ -155,7 +172,7 @@
         replyCommentId: '',
         // 如： 回复 #1 joe
         replyUser: '',
-        // 回复楼层的评论(不是自己的)
+        // 回复楼层的评论内容
         replyContent: ''
       }
     },
@@ -171,7 +188,7 @@
         // 判断是否为本人回复
         return this.loggedUser && Object.is(userId, this.loggedUser.userId);
       },
-      commentsPageTurning(page) {
+      commentsNextPage(page) {
         let articleId = this.$route.params.id;
         let params = {articleId, page};
         this.$store.dispatch("loadArticleComments", params)
@@ -197,6 +214,7 @@
         this.replyUser = null;
         this.replyContent = null;
         this.replyCommentId = null;
+        this.commentContent = null;
       },
       timestampConvert(timestamp) {
         // 时间戳转换
@@ -222,22 +240,20 @@
         };
         // 判断是否为回复
         const isReply = this.replyIndex >= 0 && !!this.replyUser && !!this.replyContent;
-        //console.log('isReply:', isReply);
         if (isReply) {
           if (isReply && !!this.parentId) {
             comment.parentId = this.parentId;
             comment.content = this.commentContent.replace(`${this.replyContent}`, '');
-            comment.replyIndex = this.replyIndex;
+            comment.replyIndex = this.comments.list.length + 1;
             comment.replyCommentId = this.replyCommentId;
           }
         }
-        //console.log('comment:', comment);
-        const router = this.$router;
         Axios.post("/comment/", comment).then(res => {
-          //console.log('res:', res);
           if (res.data.state && Object.is(res.data.state, 200)) {
             layer.msg("评论成功", {time: 1000, icon: 6});
-            router.go(0);
+            comment.headImg = this.$store.getters.loggedUser.headImg;
+            this.$store.dispatch("newComment", comment);
+            this.closeReply();
           }
         }).catch(err => {
           console.log('err:', err);

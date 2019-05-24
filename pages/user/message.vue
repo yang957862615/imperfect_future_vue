@@ -111,7 +111,10 @@
                 v-if="msgType === 4" v-for="(receivedComment,index) in receivedComments" :key="index"
               >
                 <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mt-2">{{receivedComment.commentUserName}}</h5>
+                  <h5 class="mt-2">
+                    <div
+                      v-html="`${receivedComment.commentUserName} 评论了你的文章 <a href='/article/${receivedComment.articleId}'>${receivedComment.articleTitle}</a>`"></div>
+                  </h5>
                   <small>{{timeDifference(receivedComment.createTime)}}</small>
                 </div>
                 <div class="mb-1" v-html="receivedComment.content">
@@ -122,7 +125,8 @@
         </div>
       </div>
     </div>
-    <infinite-loading ref="infiniteLoading" @infinite="scrollToMore">
+    <!--实际上，每当 identifier 属性发生变化的时候，该组件就会自行重设-->
+    <infinite-loading :identifier="infiniteId" ref="infiniteLoading" @infinite="scrollToMore">
       <span slot="no-more">
           没有更多数据啦 :(
       </span>
@@ -150,7 +154,8 @@
     middleware: 'authenticated',
     data() {
       return {
-        msgType: 1
+        msgType: 1,
+        infiniteId: +new Date()
       }
     },
     fetch({store}) {
@@ -189,9 +194,10 @@
       showDiffrentMsgs(type) {
         this.msgType = type;
         // 更换消息tab时重置loading组件
-        this.$nextTick(() => {
+        this.infiniteId += 1;
+        /*this.$nextTick(() => {
           this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
-        });
+        });*/
       },
       scrollToMore($state) {
         setTimeout(() => {

@@ -204,9 +204,9 @@
         let wsuri = "";
         const apiUrl = `${api.baseURL}`;
         if (apiUrl.indexOf("https://") > -1) {
-          wsuri = `wss://${api.baseURL.replace("https://", "")}/webSocket/${userId}`;
+          wsuri = `wss://${api.baseURL.replace("https://", "")}webSocket/${userId}`;
         } else if (apiUrl.indexOf("http://") > -1) {
-          wsuri = `ws://${api.baseURL.replace("http://", "")}/webSocket/${userId}`;
+          wsuri = `ws://${api.baseURL.replace("http://", "")}webSocket/${userId}`;
         }
         // 这里面的this都指向vue
         this.webSocket = new WebSocket(wsuri);

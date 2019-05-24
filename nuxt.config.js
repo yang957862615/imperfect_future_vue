@@ -20,7 +20,7 @@ module.exports = {
       {charset: 'utf-8'},
       {
         name: 'viewport',
-        content: 'target-densitydpi=device-dpi, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        content: 'initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'
       },
       {name: 'http-equiv', content: 'http-equiv=X-UA-Compatible,content=IE=edge'},
       {hid: 'description', name: 'description', content: 'IMPERFECT FUTURE'},
