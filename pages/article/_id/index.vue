@@ -63,7 +63,7 @@
       let promises = [
         store.dispatch("loadArticleDetails", params.id),
         store.dispatch("loadArticleComments", param),
-        store.dispatch("articleInfo", params.id)
+        store.dispatch("articleBasicInfo", params.id)
       ];
       // 如果已经登录则查询用户是否给此篇文章点赞
       if (store.getters.isAuthenticated) {

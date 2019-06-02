@@ -248,7 +248,7 @@
             comment.replyCommentId = this.replyCommentId;
           }
         }
-        Axios.post("/comment/", comment).then(res => {
+        Axios.post("/comment/post", comment).then(res => {
           if (res.data.state && Object.is(res.data.state, 200)) {
             layer.msg("评论成功", {time: 1000, icon: 6});
             comment.headImg = this.$store.getters.loggedUser.headImg;
