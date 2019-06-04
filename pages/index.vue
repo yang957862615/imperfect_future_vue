@@ -84,13 +84,19 @@
     data() {
       return {}
     },
-    fetch({store}) {
-      return Promise.all([
+
+    fetch({store, error}) {
+      /*return Promise.all([
         store.dispatch('loadArticleList')
       ]).catch(err => {
         console.log('err:', err);
         layer.msg(err, {time: 1500, icon: 5});
-      });
+      });*/
+      return Promise.all([
+        store.dispatch('loadArticleList')
+      ]).catch(err =>
+        error({statusCode: err, message: "首页加载错误"})
+      );
     },
     components: {
       ArticleList

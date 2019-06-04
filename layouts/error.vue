@@ -36,7 +36,7 @@
     props: ['error'],
     computed: {
       errorStatus() {
-        console.log('this.error:', this.error);
+        // console.log('this.error:', this.error);
         if (!/^[0-9]+$/.test(this.error.statusCode)) {
           return Number(400);
         }

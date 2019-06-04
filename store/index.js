@@ -197,6 +197,7 @@ export const actions = {
   userLoginUp({commit}, params) {
     let url = imperfectApi.userApi.loginUp();
     return Axios.post(url, params).then(res => {
+      console.log('res.data.ob:',res.data.ob);
       commit("user/USER_TOKEN", res.data.ob);
       setToken(res.data.ob);
     }).catch(err => {
@@ -206,18 +207,19 @@ export const actions = {
   },
   // 用户注销
   userLoginOut({commit}) {
-    const token = getToken();
     // 注销把本地jwt删掉就行
     commit("user/CLEAR_USER_TOKEN");
     commit("user/CLEAR_USER_INFO");
     unsetToken();
-     /* let url = imperfectApi.userApi.loginOut(token);
-    return Axios.get(url).then(res => {
-      
-    }).catch(err => {
-      console.log('用户注销err:', err);
-      return Promise.reject("用户注销err: " + err);
-    })*/
+    /*
+    const token = getToken();
+    let url = imperfectApi.userApi.loginOut(token);
+	 return Axios.get(url).then(res => {
+
+	 }).catch(err => {
+		 console.log('用户注销err:', err);
+		 return Promise.reject("用户注销err: " + err);
+	 })*/
   },
   // 获取redis里的用户信息
   redisUserInfo({commit}, params = null) {
@@ -304,7 +306,7 @@ export const actions = {
         }
       }
     }).catch((error) => {
-      console.log('加载文章列表error:', error);
+      // console.log('加载文章列表error:', error);
       return Promise.reject("加载文章列表error: " + error);
     });
   },
@@ -314,7 +316,7 @@ export const actions = {
     return Axios.get(url).then(res => {
       commit("user/USER_INDEX_INFO", res.data.ob);
     }).catch(err => {
-      console.log('加载用户首页信息错误err:', err);
+      // console.log('加载用户首页信息错误err:', err);
       return Promise.reject("加载用户首页信息错误err: " + err);
     });
   },
@@ -337,8 +339,8 @@ export const actions = {
         }
       }
     }).catch(error => {
-      console.log('加载文章列表error:', error);
-      return Promise.reject("加载文章列表error: " + error);
+      // console.log('加载文章列表error:', error);
+      return Promise.reject(error);
     });
   },
   // 加载文章详情
