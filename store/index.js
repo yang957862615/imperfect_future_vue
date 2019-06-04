@@ -207,15 +207,17 @@ export const actions = {
   // 用户注销
   userLoginOut({commit}) {
     const token = getToken();
-    let url = imperfectApi.userApi.loginOut(token);
+    // 注销把本地jwt删掉就行
+    commit("user/CLEAR_USER_TOKEN");
+    commit("user/CLEAR_USER_INFO");
+    unsetToken();
+     /* let url = imperfectApi.userApi.loginOut(token);
     return Axios.get(url).then(res => {
-      commit("user/CLEAR_USER_TOKEN");
-      commit("user/CLEAR_USER_INFO");
-      unsetToken();
+      
     }).catch(err => {
       console.log('用户注销err:', err);
       return Promise.reject("用户注销err: " + err);
-    })
+    })*/
   },
   // 获取redis里的用户信息
   redisUserInfo({commit}, params = null) {
