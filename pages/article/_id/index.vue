@@ -48,7 +48,6 @@
   import {timestampToTime} from '~/utils/timestamp_convertor';
   import ArticleComment from '~/components/views/article/ArticleComment.vue'
   import {mapState} from 'vuex';
-  import Axios from '~/plugins/Axios.js'
 
   export default {
     scrollToTop: true,
@@ -108,7 +107,7 @@
         let articleId = this.$route.params.id;
         let userId = this.$store.getters.loggedUser.userId;
         const store = this.$store;
-        Axios.post(`/article/${articleId}/${userId}/favor`).then(res => {
+        this.$axios.post(`/article/${articleId}/${userId}/favor`).then(res => {
           if (res.data && Object.is(res.data.state, 200)) {
             this.favNum = this.favorCount + 1;
             store.commit("user/USER_DID_FAVOR", true);

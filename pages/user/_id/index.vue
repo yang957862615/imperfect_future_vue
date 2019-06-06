@@ -162,11 +162,8 @@
 </template>
 
 <script>
-  import Axios from '~/plugins/Axios';
   import {getToken} from "~/utils/auth.js"
   import ArticleList from '~/components/views/article/ArticleList';
-  // 上拉加载插件
-  import InfiniteLoading from 'vue-infinite-loading/src/components/InfiniteLoading.vue';
 
   export default {
     head: {
@@ -198,7 +195,6 @@
     // middleware: 'authenticated',
     components: {
       ArticleList,
-      InfiniteLoading
     },
     validate({params}) { // 检测路由参数
       return params.id && !isNaN(Number(params.id));
@@ -317,10 +313,10 @@
           };
           let param = new FormData(); //创建form对象
           param.append('file', blob, new Date().getTime() + ".png");//通过append向form对象添加数据
-          return Axios.post("/pic/upload", param, config).then(res => {
+          return this.$axios.post("/pic/upload", param, config).then(res => {
             if (res.data.error === 0) {
               // 修改用户头像路径
-              Axios.post(`/user/${getToken()}/userInfo`,
+              this.$axios.post(`/user/${getToken()}/userInfo`,
                 {userId: store.getters.loggedUser.userId, headImg: res.data.url}).then(res1 => {
                 if (res1.data && Object.is(res1.data.state, 200)) {
                   // 刷新页面
@@ -357,7 +353,7 @@
         //console.log('newDesc:', newDesc);
         const store = this.$store.getters;
         const router = this.$router;
-        return Axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, description: newDesc}).then(res => {
+        return this.$axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, description: newDesc}).then(res => {
           if (res.data && Object.is(res.data.state, 200)) {
             router.go(0);
           } else {
@@ -377,7 +373,7 @@
         const followUserId = this.$route.params.id;
         const store = this.$store;
         if (userId && followUserId) {
-          Axios.post("/follow", {userId, followUserId}).then(res => {
+          this.$axios.post("/follow", {userId, followUserId}).then(res => {
             if (res.data && Object.is(res.data.state, 200)) {
               store.commit("user/USER_FOLLOWED", true);
             } else {
@@ -398,7 +394,7 @@
         const followUserId = this.$route.params.id;
         const store = this.$store;
         if (userId && followUserId) {
-          Axios.post("/follow/unsubscribe", {userId, followUserId}).then(res => {
+          this.$axios.post("/follow/unsubscribe", {userId, followUserId}).then(res => {
             if (res.data && Object.is(res.data.state, 200)) {
               store.commit("user/USER_FOLLOWED", false);
             } else {

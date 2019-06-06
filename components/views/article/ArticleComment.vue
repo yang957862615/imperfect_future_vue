@@ -119,7 +119,6 @@
 
 <script>
   import {timeDifference} from '~/utils/time_diffrent.js';
-  import Axios from '~/plugins/Axios';
   import {mapState, mapGetters} from 'vuex';
 
   export default {

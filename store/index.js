@@ -1,5 +1,4 @@
 // import Vue from 'vue';
-import Axios from '~/plugins/Axios';
 import {setToken, unsetToken, getToken} from "../utils/auth.js"
 import imperfectApi from '../api/index'
 // const cookieparser = require('cookieparser');
@@ -49,7 +48,7 @@ export const actions = {
   userNotOnlineMsgs({commit}, params) {
     if (!!params) {
       let url = imperfectApi.messageApi.userNotOnlineMsgs(params.userId);
-      return Axios.get(url).then(res => {
+      return this.$axios.get(url).then(res => {
         commit("message/USER_NEW_MSGS", "newMsg");
       }).catch(err => {
         console.log('加载用户没有在线时的消息错误err:', err);
@@ -69,7 +68,7 @@ export const actions = {
     } else {
       msgUrl = loadAll ? imperfectApi.commentApi.userReceivedComments(params.userId) : imperfectApi.commentApi.userReceivedComments(params.userId, params.pageNo)
     }
-    return Axios.get(msgUrl).then(res => {
+    return this.$axios.get(msgUrl).then(res => {
       if (loadAll) {
         isSent ? commit("message/USER_SENT_COMMENTS", res.data.ob) : commit("message/USER_RECEIVED_COMMENTS", res.data.ob);
       } else { // 分页查询
@@ -104,7 +103,7 @@ export const actions = {
     } else {
       msgUrl = loadAll ? imperfectApi.messageApi.subMessages(params.userId) : imperfectApi.messageApi.sub(params.userId, params.pageNo);
     }
-    return Axios.get(msgUrl).then(res => {
+    return this.$axios.get(msgUrl).then(res => {
       if (loadAll) {
         isSys ? commit("message/USER_SYS_MSGS", res.data.ob) : commit("message/USER_SUB_MSGS", res.data.ob);
       } else { // 分页查询
@@ -131,7 +130,7 @@ export const actions = {
   userDidFavor({commit}, params) {
     if (params) {
       let url = imperfectApi.articleApi.didFavor(params.articleId, params.userId);
-      return Axios.get(url).then(res => {
+      return this.$axios.get(url).then(res => {
         if (res.data && Object.is(res.data.state, 1)) {
           commit("user/USER_DID_FAVOR", true);
         } else {
@@ -153,7 +152,7 @@ export const actions = {
         favorCount: 0
       };
       let url = imperfectApi.articleApi.articleBasicInfo(articleId);
-      return Axios.get(url).then(res => {
+      return this.$axios.get(url).then(res => {
         commit("article/ARTICLE_INFO", res.data.ob);
       }).catch(err => {
         console.log('获取文章信息err:', err);
@@ -165,7 +164,7 @@ export const actions = {
   checkFollowed({commit}, params) {
     if (params && params.userId && params.followedId) {
       let url = imperfectApi.friendApi.ifFriend(params.userId, params.followedId);
-      return Axios.get(url).then(res => {
+      return this.$axios.get(url).then(res => {
         // 0 未关注 1已关注
         if (Object.is(res.data.ob, 1)) {
           commit("user/CLEAR_USER_FOLLOWED");
@@ -182,7 +181,7 @@ export const actions = {
   // 加载文章评论
   loadArticleComments({commit}, params) {
     let url = imperfectApi.commentApi.articleComments(params.articleId, params.page);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       commit("comment/ARTICLE_COMMENT_LIST", res.data.ob);
     }).catch(err => {
       console.log('加载评论err:', err);
@@ -196,7 +195,7 @@ export const actions = {
   // 用户登录
   userLoginUp({commit}, params) {
     let url = imperfectApi.userApi.loginUp();
-    return Axios.post(url, params).then(res => {
+    return this.$axios.post(url, params).then(res => {
       console.log('res.data.ob:',res.data.ob);
       commit("user/USER_TOKEN", res.data.ob);
       setToken(res.data.ob);
@@ -214,7 +213,7 @@ export const actions = {
     /*
     const token = getToken();
     let url = imperfectApi.userApi.loginOut(token);
-	 return Axios.get(url).then(res => {
+	 return this.$axios.get(url).then(res => {
 
 	 }).catch(err => {
 		 console.log('用户注销err:', err);
@@ -226,7 +225,7 @@ export const actions = {
     //console.log('redisUserInfo执行+1');
     const token = getToken() ? getToken() : params;
     let url = imperfectApi.userApi.redisUserInfo(token);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       // 已经登录
       commit("user/USER_INFO", res.data.ob);
     }).catch(err => {
@@ -241,7 +240,7 @@ export const actions = {
     const paramsState = params && !params.pageNo;
     let url =
       paramsState ? imperfectApi.friendApi.friends(params.userId) : imperfectApi.friendApi.friends(params.userId, params.pageNo);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
         if (paramsState) { // 加载全部
           commit("user/USER_FOLLOWED_USERS_LIST", res.data.ob);
         } else { // 分页查询
@@ -267,7 +266,7 @@ export const actions = {
     let url =
       paramsState ? imperfectApi.articleApi.favorArticles(params.userId) :
         imperfectApi.articleApi.favorArticles(params.userId, params.pageNo);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       if (paramsState) { // 加载全部
         commit("user/USER_FAVOR_ARTICLE_LIST", res.data.ob);
       } else { // 分页查询
@@ -292,7 +291,7 @@ export const actions = {
     let url =
       paramsState ? imperfectApi.articleApi.postedArticles(params.userId) :
         imperfectApi.articleApi.postedArticles(params.userId, params.pageNo);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       if (paramsState) { // 加载全部
         commit("user/USER_ARTICLE_LIST", res.data.ob);
       } else { // 分页查询
@@ -313,7 +312,7 @@ export const actions = {
   // 用户首页基本信息
   userIndexInfo({commit}, params) {
     let url = imperfectApi.userApi.basicUserInfo(params.userId);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       commit("user/USER_INDEX_INFO", res.data.ob);
     }).catch(err => {
       // console.log('加载用户首页信息错误err:', err);
@@ -325,7 +324,7 @@ export const actions = {
     const paramsState = params === undefined;
     // 首页加载文章列表
     let url = paramsState ? imperfectApi.articleApi.homeArticleList() : imperfectApi.articleApi.homeArticleList(params.pageNo);
-    return Axios.get(url).then(res => {
+    return this.$axios.get(url).then(res => {
       if (paramsState) { // 加载全部
         commit("article/ARTICLE_LIST", res.data.ob);
       } else { // 分页查询
@@ -347,7 +346,7 @@ export const actions = {
   loadArticleDetails({commit}, articleId) {
     // 一定要return
     let url = imperfectApi.articleApi.articleInfo(articleId);
-    return Axios.get(url).then((res) => {
+    return this.$axios.get(url).then((res) => {
       commit("article/ARTICLE_DETAILS", res.data.ob);
     }).catch(error => {
       // 要reject出去要不然页面上捕捉不到错误
@@ -358,7 +357,7 @@ export const actions = {
   // 加载文章分类
   loadCategories({commit}) {
     let url = imperfectApi.articleApi.articleCategories();
-    return Axios.get(url).then((res) => {
+    return this.$axios.get(url).then((res) => {
       commit("category/LOAD_CATEGORIES", res.data.ob);
     }).catch(err => {
       console.log('加载文章分类error:', err);
@@ -390,7 +389,7 @@ export const actions = {
         // 创建form对象 通过append向form对象添加数据
         param.append('file', blob, file.name);
         let url = imperfectApi.articleApi.uploadCover();
-        return Axios.post(url, param, config).then((res) => {
+        return this.$axios.post(url, param, config).then((res) => {
           commit("article/ARTICLE_COVER_URL", res.data.ob);
         }).catch(err => {
           console.log("上传图片错误: ", err);

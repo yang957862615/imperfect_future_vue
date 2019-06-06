@@ -139,7 +139,6 @@
 
 <script>
   // 上拉加载插件
-  import InfiniteLoading from 'vue-infinite-loading/src/components/InfiniteLoading.vue';
   // 导入方法要使用花括号
   import {timeDifference} from '~/utils/time_diffrent';
   import {mapState, mapGetters} from 'vuex';
@@ -147,9 +146,6 @@
   export default {
     head: {
       title: '消息中心'
-    },
-    components: {
-      InfiniteLoading
     },
     middleware: 'authenticated',
     data() {

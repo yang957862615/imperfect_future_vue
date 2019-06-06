@@ -51,7 +51,6 @@
 
 <script>
   // 上拉加载插件
-  import InfiniteLoading from 'vue-infinite-loading/src/components/InfiniteLoading.vue';
   // 导入方法要使用花括号
   import {timeDifference} from '~/utils/time_diffrent';
 
@@ -69,9 +68,6 @@
       viewChange: {
         type: Number
       }
-    },
-    components: {
-      InfiniteLoading
     },
     watch: {
       viewChange() {

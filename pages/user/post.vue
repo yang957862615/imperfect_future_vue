@@ -81,7 +81,6 @@
 </template>
 
 <script>
-  import Axios from '~/plugins/Axios';
   import ArticleImgUpload from '~/components/views/article/ArticleImgUpload'
 
   export default {
@@ -189,11 +188,8 @@
         // 第一步.将图片上传到服务器.
         let formdata = new FormData();
         formdata.append("file", $file);
-        Axios({
-          url: '/pic/upload',
-          method: 'post',
-          data: formdata,
-          headers: {'Content-Type': 'multipart/form-data'},
+        this.$axios.post('/pic/upload',formdata,{
+          headers: {'Content-Type': 'multipart/form-data'}
         }).then((res) => {
           // 第二步.将返回的url替换到文本原位置![...](./0) -> ![...](url)
           /**
@@ -228,7 +224,7 @@
         }
         let router = this.$router;
         let store = this.$store;
-        Axios.post("/article/", article).then((res) => {
+        this.$axios.post("/article/", article).then((res) => {
           //console.log('res:', res);
           if (res.data.state === 200) {
             layer.msg("文章发布成功~", {time: 800, icon: 1}, function () {
