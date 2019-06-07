@@ -99,13 +99,17 @@ export const actions = {
     let isSys = Object.is(params.type, "sys");
     let loadAll = params.pageNo === 1;
     if (isSys) {
-      msgUrl = loadAll ? imperfectApi.messageApi.sysMessages(params.userId) : imperfectApi.messageApi.sysMessages(params.userId, params.pageNo);
+      msgUrl = loadAll ? imperfectApi.messageApi.sysMessages(params.userId) :
+        imperfectApi.messageApi.sysMessages(params.userId, params.pageNo);
     } else {
-      msgUrl = loadAll ? imperfectApi.messageApi.subMessages(params.userId) : imperfectApi.messageApi.sub(params.userId, params.pageNo);
+      msgUrl = loadAll ? imperfectApi.messageApi.subMessages(params.userId) :
+        imperfectApi.messageApi.subMessages(params.userId, params.pageNo);
     }
     return this.$axios.get(msgUrl).then(res => {
       if (loadAll) {
-        isSys ? commit("message/USER_SYS_MSGS", res.data.ob) : commit("message/USER_SUB_MSGS", res.data.ob);
+        isSys ?
+          commit("message/USER_SYS_MSGS", res.data.ob) :
+          commit("message/USER_SUB_MSGS", res.data.ob);
       } else { // 分页查询
         if (res.data.ob.records.length) {
           // 合并数据
@@ -319,9 +323,11 @@ export const actions = {
     // 首页加载文章列表
     let url = paramsState ? imperfectApi.articleApi.homeArticleList() : imperfectApi.articleApi.homeArticleList(params.pageNo);
     return this.$axios.get(url).then(res => {
-      if (paramsState) { // 加载全部
+      if (paramsState) {
+        // 加载全部
         commit("article/ARTICLE_LIST", res.data.ob);
-      } else { // 分页查询
+      } else {
+        // 分页查询
         if (res.data.ob.records.length) {
           // 合并数据
           commit("article/SCROLL_TO_MORE_ARTICLES", res.data.ob);
