@@ -82,6 +82,7 @@
 
 <script>
   import ArticleImgUpload from '~/components/views/article/ArticleImgUpload'
+  import imperfectApi from '~/api/index'
 
   export default {
     head: {
@@ -188,7 +189,8 @@
         // 第一步.将图片上传到服务器.
         let formdata = new FormData();
         formdata.append("file", $file);
-        this.$axios.post('/pic/upload',formdata,{
+        let url = imperfectApi.articleApi.uploadCover();
+        this.$axios.post(url, formdata, {
           headers: {'Content-Type': 'multipart/form-data'}
         }).then((res) => {
           // 第二步.将返回的url替换到文本原位置![...](./0) -> ![...](url)
@@ -206,14 +208,14 @@
       },
       postArticle() { // 发布文章
         let splitTags = this.tags.join(",");
-        let desc = this.articleContent.substr(0, 100);
+        let description = this.articleContent.substr(0, 100);
         let msg = null;
         let article = {
           title: this.title || (msg = '标题不能为空'),
           categoryId: this.categoryId || (msg = '分类不能为空'),
           userId: this.$store.getters.loggedUser.userId || (msg = '请登录'),
           tags: splitTags || (msg = '标签不能为空'),
-          desc: desc || (msg = '描述不能为空'),
+          description: description || (msg = '描述不能为空'),
           imgUrl: this.getCoverSrc || (msg = '封面不能为空'),
           content: this.articleContent || (msg = '内容不能为空')
         };
@@ -224,16 +226,17 @@
         }
         let router = this.$router;
         let store = this.$store;
-        this.$axios.post("/article/", article).then((res) => {
+        let url = imperfectApi.articleApi.postArticle();
+        this.$axios.post(url, article).then(res => {
           //console.log('res:', res);
-          if (res.data.state === 200) {
             layer.msg("文章发布成功~", {time: 800, icon: 1}, function () {
               store.commit("article/CLEAR_ARTICLE_COVER_URL");
               router.push({path: "/"});
             });
-          }
-        }).catch((error) => {
-          console.log('文章发布error:', error);
+        }).catch(error => {
+          layer.msg("文章发布错误~", {time: 800, icon: 1}, function () {
+            console.log('文章发布error:', error);
+          });
         });
       }
     }

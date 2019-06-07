@@ -54,7 +54,19 @@ const articleApi = {
    * 上传文章封面
    */
   uploadCover() {
-    return `/pic/upload`;
+    return `/article/pic/upload`;
+  },
+  /**
+   * 文章点赞
+   */
+  favor(articleId, userId) {
+    return `/article/${articleId}/${userId}/favor`;
+  },
+  /**
+   * 发布文章
+   */
+  postArticle() {
+    return `/article/post`;
   }
 };
 

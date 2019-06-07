@@ -60,7 +60,7 @@ module.exports = {
     plugins: [
         {src: '~/plugins/mavonEditor.js', ssr: false},
         {src: '~/plugins/vueLazyload.js', ssr: false},
-        {src: '~/plugins/CountUp.js', ssr: false},
+        {src: '~/plugins/countUp.js', ssr: false},
         {src: '~/plugins/backTop.js', ssr: false},
         {src: '~/plugins/vueImageCropper.js', ssr: false},
         {src: '~/plugins/infiniteLoading.js', ssr: false},

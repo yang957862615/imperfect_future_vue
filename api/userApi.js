@@ -6,16 +6,10 @@ const userApi = {
     return `/user/loginUp`;
   },
   /**
-   * 注销
+   * jwt里面的的用户信息
    */
-  loginOut(token) {
-    return `/user/loginOut/${token}`;
-  },
-  /**
-   * redis里面的的用户信息
-   */
-  redisUserInfo(token) {
-    return `/user/redis/${token}`;
+  jwtUserInfo() {
+    return `/user/userInfo`;
   },
   /**
    * 用户首页基本信息
@@ -23,6 +17,12 @@ const userApi = {
   basicUserInfo(userId) {
     return `/user/${userId}/userInfo`;
   },
+  /**
+   * 修改用户信息
+   */
+  modifyUserInfo() {
+    return `/user/modify/userInfo`;
+  }
 };
 
 export default userApi;

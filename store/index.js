@@ -35,7 +35,7 @@ export const actions = {
         // 切记一定要返回promise
         return Promise.all([
           // 加载用户信息
-          store.dispatch("redisUserInfo", accessToken)
+          store.dispatch("jwtUserInfo", accessToken)
         ]).catch(err => {
           console.log('加载用户信息错误err:', err);
           // 如果token已过期则删除token以免一直去查redis然后一直报错
@@ -131,7 +131,7 @@ export const actions = {
     if (params) {
       let url = imperfectApi.articleApi.didFavor(params.articleId, params.userId);
       return this.$axios.get(url).then(res => {
-        if (res.data && Object.is(res.data.state, 1)) {
+        if (Object.is(res.data.ob, "1")) {
           commit("user/USER_DID_FAVOR", true);
         } else {
           commit("user/USER_DID_FAVOR", false);
@@ -195,8 +195,11 @@ export const actions = {
   // 用户登录
   userLoginUp({commit}, params) {
     let url = imperfectApi.userApi.loginUp();
-    return this.$axios.post(url, params).then(res => {
-      console.log('res.data.ob:',res.data.ob);
+    let uRLSearchParams = new URLSearchParams();
+    uRLSearchParams.append('username', params.username);
+    uRLSearchParams.append('password', params.password);
+    return this.$axios.post(url, uRLSearchParams).then(res => {
+      console.log('res.data.ob:', res.data.ob);
       commit("user/USER_TOKEN", res.data.ob);
       setToken(res.data.ob);
     }).catch(err => {
@@ -210,26 +213,17 @@ export const actions = {
     commit("user/CLEAR_USER_TOKEN");
     commit("user/CLEAR_USER_INFO");
     unsetToken();
-    /*
-    const token = getToken();
-    let url = imperfectApi.userApi.loginOut(token);
-	 return this.$axios.get(url).then(res => {
-
-	 }).catch(err => {
-		 console.log('用户注销err:', err);
-		 return Promise.reject("用户注销err: " + err);
-	 })*/
   },
-  // 获取redis里的用户信息
-  redisUserInfo({commit}, params = null) {
+  // 获取jwt里的用户信息
+  jwtUserInfo({commit}, params = null) {
     //console.log('redisUserInfo执行+1');
     const token = getToken() ? getToken() : params;
-    let url = imperfectApi.userApi.redisUserInfo(token);
-    return this.$axios.get(url).then(res => {
+    let url = imperfectApi.userApi.jwtUserInfo(token);
+    return this.$axios.post(url, token).then(res => {
       // 已经登录
       commit("user/USER_INFO", res.data.ob);
     }).catch(err => {
-      console.log('获取redis里的用户信息err:', err);
+      console.log('获取jwt里的用户信息err:', err);
       unsetToken();
       return Promise.reject(err);
     })
@@ -351,7 +345,7 @@ export const actions = {
     }).catch(error => {
       // 要reject出去要不然页面上捕捉不到错误
       console.log('加载文章详情error:', error);
-      return Promise.reject("加载文章详情error: " + error);
+      return Promise.reject(error);
     });
   },
   // 加载文章分类
@@ -366,6 +360,7 @@ export const actions = {
   },
   // 上传文章封面
   uploadArticleCover({commit}, file) {
+    const _this = this;
     //判断支不支持FileReader
     if (!file || !window.FileReader) return;
     //创建一个reader
@@ -389,7 +384,7 @@ export const actions = {
         // 创建form对象 通过append向form对象添加数据
         param.append('file', blob, file.name);
         let url = imperfectApi.articleApi.uploadCover();
-        return this.$axios.post(url, param, config).then((res) => {
+        return _this.$axios.post(url, param, config).then(res => {
           commit("article/ARTICLE_COVER_URL", res.data.ob);
         }).catch(err => {
           console.log("上传图片错误: ", err);

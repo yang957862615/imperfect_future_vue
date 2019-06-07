@@ -113,7 +113,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
-  import api from '~/api.config';
+  import baseURL from '~/api.config';
 
   export default {
     data() {
@@ -202,11 +202,11 @@
         }
         // 初始化msgList
         let wsuri = "";
-        const apiUrl = `${api.baseURL}`;
+        const apiUrl = baseURL.apiBaseURL;
         if (apiUrl.indexOf("https://") > -1) {
-          wsuri = `wss://${api.baseURL.replace("https://", "")}webSocket/${userId}`;
+          wsuri = `wss://${apiUrl.replace("https://", "")}webSocket/${userId}`;
         } else if (apiUrl.indexOf("http://") > -1) {
-          wsuri = `ws://${api.baseURL.replace("http://", "")}webSocket/${userId}`;
+          wsuri = `ws://${apiUrl.replace("http://", "")}webSocket/${userId}`;
         }
         // 这里面的this都指向vue
         this.webSocket = new WebSocket(wsuri);

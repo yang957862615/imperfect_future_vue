@@ -255,7 +255,6 @@
             this.closeReply();
           }
         }).catch(err => {
-          console.log('err:', err);
           layer.msg("评论错误" + err, {time: 2000, icon: 8});
         });
       },
@@ -270,7 +269,7 @@
         let formdata = new FormData();
         formdata.append("file", $file);
         Axios({
-          url: '/pic/upload',
+          url: '/article/pic/upload',
           method: 'post',
           data: formdata,
           headers: {'Content-Type': 'multipart/form-data'},

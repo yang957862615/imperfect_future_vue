@@ -2,7 +2,7 @@
   <div class="article">
     <div class="row">
       <div class="cover">
-<!--        <div class="img-fluid background" :style="{'background-image': 'url('+articleDetails.imgUrl+')'}"></div>-->
+        <!--        <div class="img-fluid background" :style="{'background-image': 'url('+articleDetails.imgUrl+')'}"></div>-->
         <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
@@ -48,6 +48,7 @@
   import {timestampToTime} from '~/utils/timestamp_convertor';
   import ArticleComment from '~/components/views/article/ArticleComment.vue'
   import {mapState} from 'vuex';
+  import imperfectApi from '~/api/index'
 
   export default {
     scrollToTop: true,
@@ -107,13 +108,10 @@
         let articleId = this.$route.params.id;
         let userId = this.$store.getters.loggedUser.userId;
         const store = this.$store;
-        this.$axios.post(`/article/${articleId}/${userId}/favor`).then(res => {
-          if (res.data && Object.is(res.data.state, 200)) {
-            this.favNum = this.favorCount + 1;
-            store.commit("user/USER_DID_FAVOR", true);
-          } else {
-            layer.msg("错误", {time: 1500, icon: 8});
-          }
+        let url = imperfectApi.articleApi.favor(articleId, userId);
+        this.$axios.post(url).then(res => {
+          this.favNum = this.favorCount + 1;
+          store.commit("user/USER_DID_FAVOR", true);
         }).catch(err => {
           layer.msg(err, {time: 1500, icon: 8});
         });
@@ -158,6 +156,7 @@
       background-size: 100% 100%;
     }*/
   }
+
   /*手机端*/
   @media (max-width: 999px) {
     /*.background {

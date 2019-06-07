@@ -84,14 +84,7 @@
     data() {
       return {}
     },
-
     fetch({store, error}) {
-      /*return Promise.all([
-        store.dispatch('loadArticleList')
-      ]).catch(err => {
-        console.log('err:', err);
-        layer.msg(err, {time: 1500, icon: 5});
-      });*/
       return Promise.all([
         store.dispatch('loadArticleList')
       ]).catch(err =>

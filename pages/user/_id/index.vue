@@ -164,6 +164,7 @@
 <script>
   import {getToken} from "~/utils/auth.js"
   import ArticleList from '~/components/views/article/ArticleList';
+  import imperfectApi from '~/api/index'
 
   export default {
     head: {
@@ -311,29 +312,22 @@
             headers: {'Content-Type': 'multipart/form-data'},
             withCredentials: true
           };
-          let param = new FormData(); //创建form对象
-          param.append('file', blob, new Date().getTime() + ".png");//通过append向form对象添加数据
-          return this.$axios.post("/pic/upload", param, config).then(res => {
-            if (res.data.error === 0) {
-              // 修改用户头像路径
-              this.$axios.post(`/user/${getToken()}/userInfo`,
-                {userId: store.getters.loggedUser.userId, headImg: res.data.url}).then(res1 => {
-                if (res1.data && Object.is(res1.data.state, 200)) {
-                  // 刷新页面
-                  router.go(0);
-                } else {
-                  layer.close(index);
-                  layer.msg("上传头像错误", {time: 1200, icon: 2});
-                }
-              }).catch(err => {
-                layer.close(index);
-                console.log("上传头像错误: ", err);
-                layer.msg("上传头像错误", {time: 1200, icon: 2});
-              });
-            } else {
-              layer.close(index);
-              layer.msg("上传头像错误", {time: 1200, icon: 2});
-            }
+          //创建form对象
+          let param = new FormData();
+          //通过append向form对象添加数据
+          param.append('file', blob, new Date().getTime() + ".png");
+          let url = imperfectApi.articleApi.uploadCover();
+          return this.$axios.post(url, param, config).then(res => {
+            // 修改用户头像路径
+            // see this:
+            // https://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&mid=209354478&idx=1&sn=edd70e826b6f9e8a570024f431c5f7fe&scene=1&key=c76941211a49ab58efed75a0405e3ca61338952103fe9eabf8528d801906e4522737274eecca5489d635a5c1aa5d8b12&ascene=0&uin=MTYxMDY3MjU1&devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.10.4+build(14E46)&version=11020113&pass_ticket=ws1Ar8vSXgH8%2FuRvUaFkiKCA57pR8100%2BhwA5Ifuc00%3D
+            // 这才是一个正常的composing promises调用链
+            let modifyUrl = imperfectApi.userApi.modifyUserInfo();
+            return this.$axios.post(modifyUrl,
+              {userId: store.getters.loggedUser.userId, headImg: res.data.ob});
+          }).then(res1 => {
+            // 刷新页面
+            router.go(0);
           }).catch(err => {
             layer.close(index);
             console.log("上传头像错误: ", err);
@@ -353,12 +347,12 @@
         //console.log('newDesc:', newDesc);
         const store = this.$store.getters;
         const router = this.$router;
-        return this.$axios.post(`/user/${getToken()}/userInfo`, {userId: store.loggedUser.userId, description: newDesc}).then(res => {
-          if (res.data && Object.is(res.data.state, 200)) {
-            router.go(0);
-          } else {
-            layer.msg("修改个性签名错误", {time: 1500, icon: 8});
-          }
+        let modifyUrl = imperfectApi.userApi.modifyUserInfo();
+        return this.$axios.post(modifyUrl, {
+          userId: store.loggedUser.userId,
+          description: newDesc
+        }).then(res => {
+          router.go(0);
         }).catch(err => {
           layer.msg("修改个性签名错误", {time: 1500, icon: 8});
         });
@@ -373,12 +367,9 @@
         const followUserId = this.$route.params.id;
         const store = this.$store;
         if (userId && followUserId) {
-          this.$axios.post("/follow", {userId, followUserId}).then(res => {
-            if (res.data && Object.is(res.data.state, 200)) {
-              store.commit("user/USER_FOLLOWED", true);
-            } else {
-              layer.msg("添加关注错误", {time: 1500, icon: 8});
-            }
+          let followUrl = imperfectApi.friendApi.follow();
+          this.$axios.post(followUrl, {userId, followUserId}).then(res => {
+            store.commit("user/USER_FOLLOWED", true);
           }).catch(err => {
             layer.msg("添加关注错误", {time: 1500, icon: 8});
           })
@@ -394,12 +385,9 @@
         const followUserId = this.$route.params.id;
         const store = this.$store;
         if (userId && followUserId) {
-          this.$axios.post("/follow/unsubscribe", {userId, followUserId}).then(res => {
-            if (res.data && Object.is(res.data.state, 200)) {
-              store.commit("user/USER_FOLLOWED", false);
-            } else {
-              layer.msg("取消关注错误", {time: 1500, icon: 8});
-            }
+          let unfollowUrl = imperfectApi.friendApi.unFollow();
+          this.$axios.post(unfollowUrl, {userId, followUserId}).then(res => {
+            store.commit("user/USER_FOLLOWED", false);
           }).catch(err => {
             layer.msg("取消关注错误", {time: 1500, icon: 8});
           })
