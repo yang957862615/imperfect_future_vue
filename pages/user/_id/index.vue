@@ -30,14 +30,14 @@
       <div class="container">
         <img
           v-if="!myself"
-          :src="userInfo ? userInfo.headImg : ''"
+          v-lazy="userInfo ? userInfo.headImg : ''"
           alt="头像"
           class="rounded-circle mb-2"
           style="width: 150px;height: 150px;"
         />
         <img
           v-if="myself"
-          :src="userInfo ? userInfo.headImg : ''"
+          v-lazy="userInfo ? userInfo.headImg : ''"
           alt="头像"
           class="rounded-circle mb-2"
           id="avatar"
@@ -115,7 +115,7 @@
             >
               <img
                 class="card-img-top p-2"
-                :src="user.headImg"
+                v-lazy="user.headImg"
                 alt="Card image cap"
               >
               <figcaption>
@@ -324,7 +324,8 @@
             // 这才是一个正常的composing promises调用链
             let modifyUrl = imperfectApi.userApi.modifyUserInfo();
             return this.$axios.post(modifyUrl,
-              {userId: store.getters.loggedUser.userId, headImg: res.data.ob});
+              {userId: store.getters.loggedUser.userId, headImg: res.data.ob}
+            );
           }).then(res1 => {
             // 刷新页面
             router.go(0);

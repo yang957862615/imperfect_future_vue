@@ -49,21 +49,19 @@
         const router = this.$router;
         // 回到跳转前页面
         const redirectUrl = this.$route.query.redirect ? decodeURIComponent(this.$route.query.redirect) : null;
-        return this.$store.dispatch("userLoginUp", {username: username.value, password: md5(password.value)})
+        return this.$store.dispatch("userLoginUp", {username: username.value, password: password.value})
           .then(res => {
-            this.$store.dispatch("jwtUserInfo").then(res1 => {
-              layer.msg("登录成功", {time: 1500, icon: 1}, function () {
-                if (redirectUrl) {
-                  console.log('redirectUrl:', redirectUrl);
-                  router.push({path: `${redirectUrl}`});
-                } else {
-                  console.log('redirectUrl:', redirectUrl);
-                  router.push({path: "/"});
-                }
-              });
-            }).catch(err => {
-              layer.msg(err, {time: 1500, icon: 7});
-            });
+            return this.$store.dispatch("jwtUserInfo");
+          }).then(res1 => {
+            /*layer.msg("登录成功", {time: 1500, icon: 1}, function () {
+            });*/
+            if (redirectUrl) {
+              console.log('redirectUrl:', redirectUrl);
+              router.push({path: `${redirectUrl}`});
+            } else {
+              console.log('redirectUrl:', redirectUrl);
+              router.push({path: "/"});
+            }
           }).catch(err => {
             layer.msg(err, {time: 1500, icon: 7});
           })

@@ -22,7 +22,16 @@ const userApi = {
    */
   modifyUserInfo() {
     return `/user/modify/userInfo`;
-  }
+  },
+  /**
+   * 已经关注的人
+   */
+  friends(userId, pageNo) {
+    if (!!pageNo) {
+      return `/user/userFollowedUsers?userId=${userId}&pageNo=${pageNo}`;
+    }
+    return `/user/userFollowedUsers?userId=${userId}`;
+  },
 };
 
 export default userApi;

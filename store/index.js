@@ -64,13 +64,16 @@ export const actions = {
     let isSent = Object.is(params.type, "sent");
     let loadAll = params.pageNo === 1;
     if (isSent) {
-      msgUrl = loadAll ? imperfectApi.commentApi.userSentComments(params.userId) : imperfectApi.commentApi.userSentComments(params.userId, params.pageNo);
+      msgUrl = loadAll ? imperfectApi.commentApi.userSentComments(params.userId) :
+        imperfectApi.commentApi.userSentComments(params.userId, params.pageNo);
     } else {
-      msgUrl = loadAll ? imperfectApi.commentApi.userReceivedComments(params.userId) : imperfectApi.commentApi.userReceivedComments(params.userId, params.pageNo)
+      msgUrl = loadAll ? imperfectApi.commentApi.userReceivedComments(params.userId) :
+        imperfectApi.commentApi.userReceivedComments(params.userId, params.pageNo)
     }
     return this.$axios.get(msgUrl).then(res => {
       if (loadAll) {
-        isSent ? commit("message/USER_SENT_COMMENTS", res.data.ob) : commit("message/USER_RECEIVED_COMMENTS", res.data.ob);
+        isSent ? commit("message/USER_SENT_COMMENTS", res.data.ob) :
+          commit("message/USER_RECEIVED_COMMENTS", res.data.ob);
       } else { // 分页查询
         if (res.data.ob.records.length) {
           // 合并数据
@@ -135,7 +138,7 @@ export const actions = {
     if (params) {
       let url = imperfectApi.articleApi.didFavor(params.articleId, params.userId);
       return this.$axios.get(url).then(res => {
-        if (Object.is(res.data.ob, "1")) {
+        if (Object.is(Number(res.data.ob), 1)) {
           commit("user/USER_DID_FAVOR", true);
         } else {
           commit("user/USER_DID_FAVOR", false);
@@ -170,7 +173,7 @@ export const actions = {
       let url = imperfectApi.friendApi.ifFriend(params.userId, params.followedId);
       return this.$axios.get(url).then(res => {
         // 0 未关注 1已关注
-        if (Object.is(res.data.ob, 1)) {
+        if (Object.is(Number(res.data.ob), 1)) {
           commit("user/CLEAR_USER_FOLLOWED");
           commit("user/USER_FOLLOWED", true);
         } else {
@@ -203,12 +206,12 @@ export const actions = {
     uRLSearchParams.append('username', params.username);
     uRLSearchParams.append('password', params.password);
     return this.$axios.post(url, uRLSearchParams).then(res => {
-      console.log('res.data.ob:', res.data.ob);
+      // console.log('res.data.ob:', res.data.ob);
       commit("user/USER_TOKEN", res.data.ob);
       setToken(res.data.ob);
     }).catch(err => {
       console.log('用户登录err:', err);
-      return Promise.reject("用户登录err:" + err);
+      return Promise.reject(err);
     });
   },
   // 用户注销
@@ -237,7 +240,7 @@ export const actions = {
     // 是否为分页查询
     const paramsState = params && !params.pageNo;
     let url =
-      paramsState ? imperfectApi.friendApi.friends(params.userId) : imperfectApi.friendApi.friends(params.userId, params.pageNo);
+      paramsState ? imperfectApi.userApi.friends(params.userId) : imperfectApi.userApi.friends(params.userId, params.pageNo);
     return this.$axios.get(url).then(res => {
         if (paramsState) { // 加载全部
           commit("user/USER_FOLLOWED_USERS_LIST", res.data.ob);
@@ -313,8 +316,8 @@ export const actions = {
     return this.$axios.get(url).then(res => {
       commit("user/USER_INDEX_INFO", res.data.ob);
     }).catch(err => {
-      // console.log('加载用户首页信息错误err:', err);
-      return Promise.reject("加载用户首页信息错误err: " + err);
+      console.log('加载用户首页信息错误err:', err);
+      return Promise.reject(err);
     });
   },
   // 加载文章列表

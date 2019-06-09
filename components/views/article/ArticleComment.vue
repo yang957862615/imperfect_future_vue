@@ -247,10 +247,11 @@
             comment.replyCommentId = this.replyCommentId;
           }
         }
-        Axios.post("/comment/post", comment).then(res => {
+        this.$axios.post("/comment/post", comment).then(res => {
           if (res.data.state && Object.is(res.data.state, 200)) {
             layer.msg("评论成功", {time: 1000, icon: 6});
             comment.headImg = this.$store.getters.loggedUser.headImg;
+            // 评论后不会刷新页面就会展示出来
             this.$store.dispatch("newComment", comment);
             this.closeReply();
           }
@@ -268,7 +269,7 @@
         // 第一步.将图片上传到服务器.
         let formdata = new FormData();
         formdata.append("file", $file);
-        Axios({
+        this.$axios({
           url: '/article/pic/upload',
           method: 'post',
           data: formdata,

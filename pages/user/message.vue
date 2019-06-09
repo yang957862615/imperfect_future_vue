@@ -159,12 +159,15 @@
       let pageNo = 1;
       let sub = store.dispatch("userMsgs", {userId, pageNo, type: 'sub'});
       let sys = store.dispatch("userMsgs", {userId, pageNo, type: 'sys'});
-      let sentComments = store.dispatch("userMsgs", {userId, pageNo, type: 'sent'});
+      let sentComments = store.dispatch("userComments", {userId, pageNo, type: 'sent'});
       let receivedComments = store.dispatch("userComments", {userId, pageNo, type: 'received'});
       // 清空未读消息
       let clearAllMsgs = store.commit("message/CLEAR_ALL_NEW_MSGS");
       let promises = [sub, sys, sentComments, receivedComments, clearAllMsgs];
-      return Promise.all(promises);
+      return Promise.all(promises).catch(err => {
+        console.log('加载消息中心err:', err);
+        layer.msg("加载消息中心失败", {time: 1500, icon: 8});
+      });
     },
     computed: {
       ...mapState({

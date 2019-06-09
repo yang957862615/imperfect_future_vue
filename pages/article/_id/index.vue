@@ -2,8 +2,7 @@
   <div class="article">
     <div class="row">
       <div class="cover">
-        <!--        <div class="img-fluid background" :style="{'background-image': 'url('+articleDetails.imgUrl+')'}"></div>-->
-        <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
+        <img v-lazy="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
     <div class="container">

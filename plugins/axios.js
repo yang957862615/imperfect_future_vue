@@ -11,6 +11,9 @@ export default function ({$axios, redirect}) {
     if (code !== 200) {
       return Promise.reject(response.data.info);
     }
+    if (code === 401) {
+      redirect('/auth/sign-in')
+    }
   });
   $axios.onError(error => {
     const code = parseInt(error.response && error.response.status);

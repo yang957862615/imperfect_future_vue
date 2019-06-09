@@ -188,12 +188,12 @@
         // 注销登录方法
         const router = this.$router;
         return this.$store.dispatch("userLoginOut").then(res => {
-          layer.msg(res, {time: 1000, icon: 1});
+          layer.msg("注销成功", {time: 1000, icon: 1});
           // 断开webSocket
           this.webSocket.close();
           router.push({path: "/"});
         }).catch(err => {
-          layer.msg(err, {time: 1500, icon: 7});
+          layer.msg("请稍后重试", {time: 1500, icon: 7});
         })
       },
       initWebSocket(userId) {
