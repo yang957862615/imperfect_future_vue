@@ -1,3 +1,1 @@
-const searchApi = {};
-
-export default searchApi;
+export default {};

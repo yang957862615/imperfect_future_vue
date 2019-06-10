@@ -1,4 +1,4 @@
-const friendApi = {
+export default {
   /**
    * 是否关注
    */
@@ -18,5 +18,3 @@ const friendApi = {
     return `/friend/unsubscribe`;
   }
 };
-
-export default friendApi;

@@ -8,8 +8,6 @@ import messageApi from './messageApi';
 import searchApi from './searchApi';
 import userApi from './userApi';
 
-const imperfectApi = {
-  articleApi, commentApi, friendApi, messageApi, searchApi, userApi
-};
-
-export default imperfectApi;
+export default {
+    articleApi, commentApi, friendApi, messageApi, searchApi, userApi
+}

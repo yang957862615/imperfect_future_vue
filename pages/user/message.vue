@@ -155,7 +155,7 @@
       }
     },
     fetch({store}) {
-      const userId = store.getters.loggedUser.userId;
+      const {userId} = store.getters.loggedUser;
       let pageNo = 1;
       let sub = store.dispatch("userMsgs", {userId, pageNo, type: 'sub'});
       let sys = store.dispatch("userMsgs", {userId, pageNo, type: 'sys'});

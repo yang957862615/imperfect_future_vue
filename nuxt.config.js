@@ -1,4 +1,4 @@
-import baseUrl from './api.config'
+import apiBaseURL from './api.config'
 
 module.exports = {
     /*
@@ -34,7 +34,7 @@ module.exports = {
         '@nuxtjs/axios',
     ],
     axios: {
-        baseURL: baseUrl.apiBaseURL
+        baseURL: apiBaseURL
     },
     render: {
         bundleRenderer: {
@@ -55,7 +55,7 @@ module.exports = {
         height: '3px'
     },
     env: {
-        baseUrl: baseUrl.apiBaseURL
+        baseUrl: apiBaseURL
     },
     plugins: [
         {src: '~/plugins/mavonEditor.js', ssr: false},
