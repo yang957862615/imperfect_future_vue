@@ -200,7 +200,7 @@
            * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
            */
           //console.log('评论组件上传图片res.data.url:', res.data.url);
-          this.$refs.md.$img2Url(pos, res.data.url);
+          this.$refs.md.$img2Url(pos, res.data.ob);
         })
       },
       $imgDel(pos) { // markdown组件删除图片
