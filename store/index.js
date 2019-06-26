@@ -1,5 +1,5 @@
 // import Vue from 'vue';
-import {setToken, unsetToken, getToken} from "../utils/auth.js"
+import {getToken, setToken, unsetToken} from "../utils/auth.js"
 import imperfectApi from '../api/index'
 // const cookieparser = require('cookieparser');
 import cookieParser from 'cookieparser'
@@ -246,7 +246,8 @@ export const actions = {
         })
     },
     // 查询已关注用户
-    userFollowedUsers({commit}, {pageNo, userId}) {
+    userFollowedUsers({commit}, params) {
+        const {pageNo, userId} = params;
         // 是否为分页查询
         const paramsState = !pageNo;
         let url = paramsState ? imperfectApi.userApi.friends(userId) :
