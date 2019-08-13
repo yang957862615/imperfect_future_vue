@@ -162,11 +162,10 @@
 </template>
 
 <script>
-  import {getToken} from "~/utils/auth.js"
-  import ArticleList from '~/components/views/article/ArticleList';
-  import imperfectApi from '~/api/index'
+    import ArticleList from '~/components/views/article/ArticleList';
+    import imperfectApi from '~/api/index'
 
-  export default {
+    export default {
     head: {
       title: 'About Page'
     },

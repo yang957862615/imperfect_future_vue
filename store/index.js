@@ -45,8 +45,7 @@ export const actions = {
         }
     },
     // 加载用户没有在线时的消息
-    userNotOnlineMsgs({commit}, params) {
-        const {userId} = params;
+    userNotOnlineMsgs({commit}, {userId}) {
         let url = imperfectApi.messageApi.userNotOnlineMsgs(userId);
         return this.$axios.get(url).then(res => {
             commit("message/USER_NEW_MSGS", "newMsg");
@@ -56,8 +55,7 @@ export const actions = {
         })
     },
     // 加载用户发出的评论和收到的评论
-    userComments({commit}, params) {
-        const {type, userId, pageNo} = params;
+    userComments({commit}, {type, userId, pageNo, $state}) {
         // 判断是否是加载全部
         let msgUrl = null;
         // 是否为系统消息
@@ -84,9 +82,9 @@ export const actions = {
                         commit("message/SCROLL_TO_MORE_USER_RECEIVED_COMMENTS", res.data.ob);
                     }
                     // 准备好下一次加载
-                    params.$state.loaded();
+                    $state.loaded();
                 } else { // 如果没有数据
-                    params.$state.complete();
+                    $state.complete();
                 }
             }
         }).catch(err => {
@@ -95,8 +93,7 @@ export const actions = {
         });
     },
     // 加载用户通知
-    userMsgs({commit}, params) {
-        const {type, userId, pageNo} = params;
+    userMsgs({commit}, {type, userId, pageNo, $state}) {
         // 判断是否是加载全部
         let msgUrl = null;
         // 是否为系统消息
@@ -124,9 +121,9 @@ export const actions = {
                         commit("message/USER_SUB_SCROLL_TO_MORE_MSGS", res.data.ob);
                     }
                     // 准备好下一次加载
-                    params.$state.loaded();
+                    $state.loaded();
                 } else { // 如果没有数据
-                    params.$state.complete();
+                    $state.complete();
                 }
             }
         }).catch(err => {
@@ -246,8 +243,7 @@ export const actions = {
         })
     },
     // 查询已关注用户
-    userFollowedUsers({commit}, params) {
-        const {pageNo, userId} = params;
+    userFollowedUsers({commit}, {pageNo, userId, $state}) {
         // 是否为分页查询
         const paramsState = !pageNo;
         let url = paramsState ? imperfectApi.userApi.friends(userId) :
@@ -260,9 +256,9 @@ export const actions = {
                         // 合并数据
                         commit("user/USER_SCROLL_TO_MORE_FOLLOWED_USERS", res.data.ob);
                         // 准备好下一次加载
-                        params.$state.loaded();
+                        $state.loaded();
                     } else { // 如果没有数据
-                        params.$state.complete();
+                        $state.complete();
                     }
                 }
             }
@@ -272,7 +268,7 @@ export const actions = {
         });
     },
     // 用户收藏文章
-    userFavorArticles({commit}, {pageNo, userId}) {
+    userFavorArticles({commit}, {pageNo, userId, $state}) {
         // 是否为分页查询
         const paramsState = !pageNo;
         let url = paramsState ? imperfectApi.articleApi.favorArticles(userId) :
@@ -285,9 +281,9 @@ export const actions = {
                     // 合并数据
                     commit("user/USER_FAVOR_SCROLL_TO_MORE_ARTICLES", res.data.ob);
                     // 准备好下一次加载
-                    params.$state.loaded();
+                    $state.loaded();
                 } else { // 如果没有数据
-                    params.$state.complete();
+                    $state.complete();
                 }
             }
         }).catch((error) => {
@@ -296,10 +292,9 @@ export const actions = {
         });
     },
     // 用户首页加载用户基本信息和用户所有文章
-    userIndexArticles({commit}, params) {
-        const {pageNo, userId} = params;
+    userIndexArticles({commit}, {pageNo, userId, $state}) {
         // 是否为分页查询
-        const paramsState = params && !pageNo;
+        const paramsState = !pageNo;
         let url =
             paramsState ? imperfectApi.articleApi.postedArticles(userId) :
                 imperfectApi.articleApi.postedArticles(userId, pageNo);
@@ -311,9 +306,9 @@ export const actions = {
                     // 合并数据
                     commit("user/USER_SCROLL_TO_MORE_ARTICLES", res.data.ob);
                     // 准备好下一次加载
-                    params.$state.loaded();
+                    $state.loaded();
                 } else { // 如果没有数据
-                    params.$state.complete();
+                    $state.complete();
                 }
             }
         }).catch((error) => {
@@ -333,7 +328,7 @@ export const actions = {
     },
     // 加载文章列表
     loadArticleList({commit}, params) {
-        const paramsState = params === undefined;
+        const paramsState = !params;
         // 首页加载文章列表
         let url = paramsState ? imperfectApi.articleApi.homeArticleList() :
             imperfectApi.articleApi.homeArticleList(params.pageNo);
