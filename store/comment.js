@@ -11,7 +11,7 @@ export const state = () => {
 export const mutations = {
   ARTICLE_COMMENT_LIST(state, data) {
     state.comments.list = data.content;
-    state.comments.currentPage = data.number;
+    state.comments.currentPage = data.number + 1;
     state.comments.pages = data.totalPages;
   },
   NEW_ARTICLE_COMMENT(state, data) {
