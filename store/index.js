@@ -4,7 +4,6 @@ import imperfectApi from '../api/index'
 // const cookieparser = require('cookieparser');
 import cookieParser from 'cookieparser'
 
-
 /**
  * 貌似getter写在index里才能取到，暂时先这样。
  */
