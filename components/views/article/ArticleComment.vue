@@ -201,7 +201,7 @@
         // 暂时解决方案： 在输入框上写两个输入框里面显示回复信息
         this.parentId = comment.userId;
         this.replyIndex = index;
-        this.replyCommentId = comment.commentId;
+        this.replyCommentId = comment._id;
         this.replyUser = `回复 #${index} @${this.mySelf(comment.userId) ? '我' : comment.commentUserName}`;
         // TODO 如果是代码或者图片 怎么优化？
         this.replyContent = comment.content.replace(/<[^>]+>/g, ""); //去掉所有的html标记;

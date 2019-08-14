@@ -1,7 +1,6 @@
 // import Vue from 'vue';
 import {getToken, setToken, unsetToken} from "../utils/auth.js"
 import imperfectApi from '../api/index'
-// const cookieparser = require('cookieparser');
 import cookieParser from 'cookieparser'
 
 /**
@@ -17,7 +16,7 @@ export const getters = {
     userUnReadMsgCount(state) {
         // 未读消息数量
         return state.message.newMsgs.list.length;
-    }
+    },
 };
 
 // global actions
@@ -39,6 +38,7 @@ export const actions = {
                     console.log('加载用户信息错误err:', err);
                     // 如果token已过期则删除token以免一直去查redis然后一直报错
                     unsetToken();
+                    commit("user/CLEAR_USER_TOKEN");
                 });
             }
         }
@@ -47,7 +47,9 @@ export const actions = {
     userNotOnlineMsgs({commit}, {userId}) {
         let url = imperfectApi.messageApi.userNotOnlineMsgs(userId);
         return this.$axios.get(url).then(res => {
-            commit("message/USER_NEW_MSGS", "newMsg");
+            if (!!res.data.ob) {
+                commit("message/USER_NEW_MSGS", "newMsg");
+            }
         }).catch(err => {
             console.log('加载用户没有在线时的消息错误err:', err);
             return Promise.reject("加载用户没有在线时的消息错误");
@@ -238,6 +240,7 @@ export const actions = {
         }).catch(err => {
             console.log('获取jwt里的用户信息err:', err);
             unsetToken();
+            commit("user/CLEAR_USER_TOKEN");
             return Promise.reject(err);
         })
     },

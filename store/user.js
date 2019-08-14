@@ -60,7 +60,7 @@ export const mutations = {
     state.userInfo = null;
   },
   CLEAR_USER_TOKEN(state) {
-    state.token = '';
+    state.token = null;
   },
   USER_FOLLOWED(state, data) {
     state.followed = data;
