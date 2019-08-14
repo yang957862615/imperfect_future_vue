@@ -49,21 +49,21 @@ export const mutations = {
     state.newMsgs.list = [];
   },
   USER_SENT_COMMENTS(state, data) {
-    state.sentComments.list = [...data.records];
+    state.sentComments.list = [...data.content];
     state.sentComments.currentPage = data.current;
   },
   USER_RECEIVED_COMMENTS(state, data) {
-    state.receivedComments.list = [...data.records];
+    state.receivedComments.list = [...data.content];
     state.receivedComments.currentPage = data.current;
   },
   SCROLL_TO_MORE_USER_SENT_COMMENTS(state, data) {
     // 滚动获取更多消息
-    state.sentComments.list = state.sentComments.list.concat(data.records);
+    state.sentComments.list = state.sentComments.list.concat(data.content);
     state.sentComments.currentPage = data.current;
   },
   SCROLL_TO_MORE_USER_RECEIVED_COMMENTS(state, data) {
     // 滚动获取更多消息
-    state.receivedComments.list = state.receivedComments.list.concat(data.records);
+    state.receivedComments.list = state.receivedComments.list.concat(data.content);
     state.receivedComments.currentPage = data.current;
   },
 

@@ -10,9 +10,9 @@ export const state = () => {
 
 export const mutations = {
   ARTICLE_COMMENT_LIST(state, data) {
-    state.comments.list = data.records;
-    state.comments.currentPage = data.current;
-    state.comments.pages = data.pages;
+    state.comments.list = data.content;
+    state.comments.currentPage = data.number;
+    state.comments.pages = data.totalPages;
   },
   NEW_ARTICLE_COMMENT(state, data) {
     // 插入数组首位
