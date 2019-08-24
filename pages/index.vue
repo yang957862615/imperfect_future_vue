@@ -74,43 +74,43 @@
       <div class="swiper-container">
           <div class="swiper-wrapper">
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/1.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/1.jpg`">
                   <!--          Slide 1-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/2.jpg`"/>
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/2.jpg`"/>
                   <!--          Slide 2-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/3.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/3.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/4.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/4.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/5.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/5.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/6.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/6.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/7.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/7.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/8.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/8.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/9.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/9.jpg`">
                   <!--          Slide 3-->
               </div>
               <div class="swiper-slide">
-                  <img class="d-block w-99" v-lazy="`http://192.168.65.128/images/2019/08/01/10.jpg`">
+                  <img class="d-block w-99" v-lazy="`http://192.168.189.129/images/2019/08/01/10.jpg`">
                   <!--          Slide 3-->
               </div>
           </div>

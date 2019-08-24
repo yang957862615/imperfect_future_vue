@@ -51,16 +51,20 @@
             <nuxt-link :to="loginPage" class="btn btn-primary">登录</nuxt-link>
             <a href="#" class="btn btn-primary">注册</a>
           </div>
+            <div class="header-msg btn-group-sm mr-5" v-show="loggedUser">
+                <nuxt-link class="font-weight-bold" :to="{path: '/search'}">
+              <span class="fa fa-search" title="搜索" style="font-size: 20px;color: #FFFFFF">
+              </span>
+                </nuxt-link>
+            </div>
           <div class="header-post btn-group-sm mr-5" v-show="loggedUser">
-            <nuxt-link class="font-weight-bold"
-                       :to="{path: '/user/post'}">
+              <nuxt-link class="font-weight-bold" :to="{path: '/user/post'}">
               <span class="fa fa-pencil-square-o" title="发表新文章" style="font-size: 20px;color: #FFFFFF"></span>
             </nuxt-link>
           </div>
           <div class="header-msg btn-group-sm mr-5" v-show="loggedUser">
-            <nuxt-link class="font-weight-bold"
-                       :to="{path: '/user/message'}">
-              <span class="fa fa-bell-o" title="新消息" style="font-size: 20px;color: #FFFFFF">
+              <nuxt-link class="font-weight-bold" :to="{path: '/user/message'}">
+              <span class="fa fa-bell-o" title="消息中心" style="font-size: 20px;color: #FFFFFF">
                 <!--<span v-if="unReadMsgCount > 0" class="badge badge-primary ml-1">{{unReadMsgCount}}</span>-->
                 <span v-if="unReadMsgCount > 0" class="fa fa-circle ml-1" style="color: red;font-size: 9px;"></span>
               </span>
@@ -112,10 +116,10 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
-  import apiBaseURL from '~/api.config';
+    import {mapGetters} from 'vuex'
+    import apiBaseURL from '~/api.config';
 
-  export default {
+    export default {
     data() {
       return {}
     },
