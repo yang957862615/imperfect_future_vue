@@ -6,7 +6,7 @@
                 <input id="a" class="form-control form-control-lg" type="text" placeholder="搜索文章" v-model="keywords">
             </div>
             <div class="form-group col-md-2 mt-4 ml-3">
-                <button type="button" class="btn btn-sm btn-primary" @click="search">搜素</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="search">搜索</button>
             </div>
         </div>
         <div v-if="articleList.length > 0" class="media mb-5" v-for="(article,index) in articleList" :key="index">

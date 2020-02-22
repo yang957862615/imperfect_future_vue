@@ -18,13 +18,11 @@ module.exports = {
             {rel: 'stylesheet', href: 'https://lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.css'},
             {rel: 'stylesheet', href: 'https://lib.baomitu.com/animate.css/3.7.0/animate.css'},
             {rel: 'stylesheet', href: 'https://lib.baomitu.com/layer/3.1.1/theme/default/layer.css'},
-            {rel: 'stylesheet', href: 'https://lib.baomitu.com/Swiper/4.5.0/css/swiper.min.css'},
         ],
         script: [
             {src: 'https://lib.baomitu.com/jquery/3.3.1/jquery.js'},
             {src: 'https://lib.baomitu.com/twitter-bootstrap/4.0.0/js/bootstrap.js'},
             {src: 'https://lib.baomitu.com/layer/3.1.1/layer.js'},
-            {src: 'https://lib.baomitu.com/Swiper/4.5.0/js/swiper.js'},
         ]
     },
     css: [
