@@ -22,9 +22,9 @@
             <span v-if="favNum === 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{articleInfo.favorCount}}</span>
             <span v-if="favNum > 0" class="fa fa-heart" v-show="didFavor === true" style="color: red"> {{parseInt(articleInfo.favorCount)+1}}</span>
             <span
-              class="fa fa-heart"
-              @click.once="favor"
-              v-show="didFavor === false"
+                class="fa fa-heart"
+                @click.once="favor"
+                v-show="didFavor === false"
             >
                 {{articleInfo.favorCount}}
               </span>
@@ -44,90 +44,90 @@
 </template>
 
 <script>
-  import {timestampToTime} from '~/utils/timestamp_convertor';
-  import ArticleComment from '~/components/views/article/ArticleComment.vue'
-  import {mapState} from 'vuex';
-  import imperfectApi from '~/api/index'
+import {timestampToTime} from '~/utils/timestamp_convertor';
+import ArticleComment from '~/components/views/article/ArticleComment.vue';
+import {mapState} from 'vuex';
+import imperfectApi from '~/api/index';
 
-  export default {
-    scrollToTop: true,
-    validate({params}) { // 检测路由参数
-      return params.id && !isNaN(Number(params.id));
-    },
-    components: {
-      ArticleComment
-    },
-    fetch({store, params, error}) {
-      let param = {articleId: params.id, page: 1};
-      let promises = [
-        store.dispatch("loadArticleDetails", params.id),
-        store.dispatch("loadArticleComments", param),
-        store.dispatch("articleBasicInfo", params.id)
-      ];
-      // 如果已经登录则查询用户是否给此篇文章点赞
-      if (store.getters.isAuthenticated) {
-        let userDidFavor = store.dispatch("userDidFavor", {
-          articleId: params.id,
-          userId: store.getters.loggedUser.userId
-        });
-        promises.push(userDidFavor);
-      }
-      return Promise.all(promises).catch(err => {
-        error({statusCode: 500, message: err})
-      });
-    },
-    head() {
-      return {
-        title: this.articleDetails.title || '',
-        meta: [
-          {
-            hid: 'keywords',
-            name: 'keywords',
-            content: (this.articleDetails.title) || ''
-          },
-          {hid: 'description', name: 'description', content: this.articleDetails.desc}
-        ]
-      }
-    },
-    data() {
-      return {
-        favNum: 0
-      }
-    },
-    methods: {
-      timestampConvert(timestamp) { // 时间戳转换
-        return timestampToTime(timestamp);
-      },
-      favor() {
-        // 给文章点赞
-        if (!this.$store.getters.isAuthenticated) {
-          layer.msg("请先登录！", {time: 1500, icon: 6});
-          return;
-        }
-        let articleId = this.$route.params.id;
-        let userId = this.$store.getters.loggedUser.userId;
-        const store = this.$store;
-        let url = imperfectApi.articleApi.favor(articleId, userId);
-        this.$axios.post(url).then(res => {
-          this.favNum = this.favorCount + 1;
-          store.commit("user/USER_DID_FAVOR", true);
-        }).catch(err => {
-          layer.msg(err, {time: 1500, icon: 8});
-        });
-      }
-    },
-    computed: {
-      ...mapState({
-        // 获取文章详细信息
-        articleDetails: state => state.article.detail.data,
-        // 文章点击量等信息
-        articleInfo: state => state.article.articleInfo,
-        // 用户是否已经对此篇文章点赞
-        didFavor: state => state.user.didFavor,
-        favorCount: state => state.article.articleInfo.favorCount,
-      })
-    }
-  }
+export default {
+	scrollToTop: true,
+	validate({params}) { // 检测路由参数
+		return params.id && !isNaN(Number(params.id));
+	},
+	components: {
+		ArticleComment
+	},
+	fetch({store, params, error}) {
+		let param = {articleId: params.id, page: 1};
+		let promises = [
+			store.dispatch('loadArticleDetails', params.id),
+			store.dispatch('loadArticleComments', param),
+			store.dispatch('articleBasicInfo', params.id)
+		];
+		// 如果已经登录则查询用户是否给此篇文章点赞
+		if (store.getters.isAuthenticated) {
+			let userDidFavor = store.dispatch('userDidFavor', {
+				articleId: params.id,
+				userId: store.getters.loggedUser.userId
+			});
+			promises.push(userDidFavor);
+		}
+		return Promise.all(promises).catch(err => {
+			error({statusCode: err.status, message: err.statusText});
+		});
+	},
+	head() {
+		return {
+			title: this.articleDetails.title || '',
+			meta: [
+				{
+					hid: 'keywords',
+					name: 'keywords',
+					content: (this.articleDetails.title) || ''
+				},
+				{hid: 'description', name: 'description', content: this.articleDetails.desc}
+			]
+		};
+	},
+	data() {
+		return {
+			favNum: 0
+		};
+	},
+	methods: {
+		timestampConvert(timestamp) { // 时间戳转换
+			return timestampToTime(timestamp);
+		},
+		favor() {
+			// 给文章点赞
+			if (!this.$store.getters.isAuthenticated) {
+				layer.msg('请先登录！', {time: 1500, icon: 6});
+				return;
+			}
+			let articleId = this.$route.params.id;
+			let userId = this.$store.getters.loggedUser.userId;
+			const store = this.$store;
+			let url = imperfectApi.articleApi.favor(articleId, userId);
+			this.$axios.post(url).then(res => {
+				this.favNum = this.favorCount + 1;
+				store.commit('user/USER_DID_FAVOR', true);
+			}).catch(err => {
+				layer.msg(err, {time: 1500, icon: 8});
+			});
+		}
+	},
+	computed: {
+		...mapState({
+			// 获取文章详细信息
+			articleDetails: state => state.article.detail.data,
+			// 文章点击量等信息
+			articleInfo: state => state.article.articleInfo,
+			// 用户是否已经对此篇文章点赞
+			didFavor: state => state.user.didFavor,
+			favorCount: state => state.article.articleInfo.favorCount,
+		})
+	}
+};
 </script>
 
 <style>
@@ -147,7 +147,7 @@
       content: attr(data-text);
       color: #FFF;
     }
-
+    
     /*.background {
       width: 100%;
       height: 800px;
@@ -155,7 +155,7 @@
       background-size: 100% 100%;
     }*/
   }
-
+  
   /*手机端*/
   @media (max-width: 999px) {
     /*.background {
