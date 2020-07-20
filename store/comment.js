@@ -16,7 +16,7 @@ export const mutations = {
   },
   NEW_ARTICLE_COMMENT(state, data) {
     // 插入数组首位
-    state.comments.list.push(data);
+    state.comments.list.unshift(data);
   },
   CLEAR_COMMENT_LIST(state) {
     state.comments.list = [];

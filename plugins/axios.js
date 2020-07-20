@@ -1,22 +1,15 @@
-import {getToken} from '../utils/auth';
-
-export default function ({$axios, redirect}) {
-
+export default function ({redirect, app: {$axios, $cookies}}) {
 	$axios.onResponse(response => {
 		const code = parseInt(response && response.data.state);
 		if (code !== 200) {
-			// 这里报错后会流转到$axios.onError方法
-			let reason = {response: {status: code, statusText: response.data.info}};
-			return Promise.reject(reason);
+			return Promise.reject(response.data.info);
 		}
 	});
-
 	$axios.onError(error => {
 		const code = parseInt(error.response && error.response.status);
 		if (code === 401) {
 			redirect('/auth/sign-in');
 		}
-		return Promise.reject(error.response);
 	});
 
 	// Adds header: `Content-Type: application/x-www-form-urlencoded` to only post requests
@@ -24,5 +17,7 @@ export default function ({$axios, redirect}) {
 		'post'
 	]);
 
-	$axios.setHeader('Authorization', !!getToken() ? 'Bearer ' + getToken() : '');
+	// TODO 刷新页面获取不到cookie
+	let token = $cookies.get('token');
+	$axios.setHeader('Authorization', !!token ? `Bearer ${token}` : '');
 }

@@ -3,9 +3,8 @@
     <div class="container pb-5">
       <div class="row pad-top text-center">
         <div class="col-md-6 offset-md-3 text-center">
-          <h1 v-if="`${errorStatus}`.indexOf('4')>-1"> 抱歉，我们出了点问题 </h1>
-          <h1 v-if="`${errorStatus}`.indexOf('5')>-1"> 抱歉，服务器出了点问题 </h1>
-          <h5> Now Go Back Using Below LInk </h5>
+          <h1> What have you done? </h1>
+          <h5> Now Go Back Using Below LInk</h5>
           <span id="error-link">
             <v-countup :start-value="1" :end-value="errorStatus"></v-countup>
           </span>
@@ -23,48 +22,48 @@
 </template>
 
 <script>
-export default {
-	head() {
-		return {
-			title: `ERROR ${this.error.statusCode} | ${this.error.message}`
-		};
-	},
-	data() {
-		return {};
-	},
-	layout: 'empty',
-	name: 'error',
-	props: ['error'],
-	computed: {
-		errorStatus() {
-			// console.log('this.error:', this.error);
-			if (!/^[0-9]+$/.test(this.error.statusCode)) {
-				return Number(400);
-			}
-			return this.error.statusCode;
-		}
-	}
-};
+  export default {
+    head() {
+      return {
+        title: `ERROR ${this.error.statusCode} | ${this.error.message}`
+      }
+    },
+    data() {
+      return {}
+    },
+    layout: 'empty',
+    name: "error",
+    props: ['error'],
+    computed: {
+      errorStatus() {
+        // console.log('this.error:', this.error);
+        if (!/^[0-9]+$/.test(this.error.statusCode)) {
+          return Number(400);
+        }
+        return this.error.statusCode;
+      }
+    }
+  }
 </script>
 
 <style scoped>
   h1, h5, h2, a {
     font-family: "Microsoft Sans Serif";
   }
-  
+
   #body {
     background-color: #B396FF !important;
     color: #fff;
   }
-  
+
   .pad-top {
     padding-top: 60px;
   }
-  
+
   .text-center {
     text-align: center;
   }
-  
+
   #error-link {
     font-size: 150px;
     padding: 10px;

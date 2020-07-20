@@ -9,7 +9,7 @@
     </keep-alive>
     <!---->
     <!--<Footer></Footer>-->
-    <vm-back-top :duration="300"></vm-back-top>
+    <vm-back-top :duration="500"></vm-back-top>
   </div>
 </template>
 

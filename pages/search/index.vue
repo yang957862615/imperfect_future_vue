@@ -22,19 +22,19 @@
 </template>
 
 <script>
-    import imperfectApi from '~/api/index'
+	import imperfectApi from '~/api/index'
 
-    export default {
-        name: "index",
-        data() {
-            return {
-                keywords: '',
-                pageNo: 1,
-                articleList: []
-            }
-        },
-        methods: {
-            search() {
+	export default {
+		name: "index",
+		data() {
+			return {
+				keywords: '',
+				pageNo: 1,
+				articleList: []
+			}
+		},
+		methods: {
+			search() {
                 if (!this.keywords) {
                     return;
                 }

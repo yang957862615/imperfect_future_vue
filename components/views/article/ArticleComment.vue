@@ -1,6 +1,5 @@
 <template>
-  <div class="card border-light"
-       style="width: 100%;margin-bottom: 10px;margin-top: 250px;">
+  <div class="card border-light" style="width: 100%;margin-top: 250px;">
     <div class="card-body">
       <h1 class="card-title text-info pt-1">评论 · {{comments.list.length}}</h1>
       <div class="mb-5 pt-3" style="border-top: 1px solid #eaecef;">
@@ -10,14 +9,14 @@
             :class="[index > 0 ? 'card mt-2' : 'card']"
         >
           <div class="card-body">
-            <div class="media comment" :id="`c${index+=1}`">
+            <div class="media comment" :id="`c${index}`">
               <img class="mr-3 rounded-circle" style="width: 50px;height: 50px;"
                    :src="comment.headImg"
                    alt="头像">
               <div class="media-body" style="max-width: 100%;">
                 <div class="comment-desc">
                   <nuxt-link :to="`/user/${comment.userId}`" class="text-info mt-0">
-                    {{comment.commentUserName}} ·
+                    {{mySelf(comment.userId) ? '我' : comment.commentUserName}} ·
                   </nuxt-link>
                   <span class="font-weight-light text-info badge">
                     {{timestampConvert(comment.createTime)}}
@@ -25,8 +24,11 @@
                       ·
                       <a
                           :href="`#c${Number(comment.replyIndex) > 0 ? Number(comment.replyIndex)-1 : comment.replyIndex}`">
-                        @{{comment.replyUserName}} #{{comment.replyIndex}}
+                        回复#{{comment.replyIndex}}
                       </a>
+                      <nuxt-link :to="`/user/${comment.parentId}`">
+                        @{{mySelf(comment.parentId) ? '我' : comment.replyUserName}}
+                      </nuxt-link>
                     </span>
                     <span class="mt-2" v-else-if="comment.parentId" style="color: rgba(138, 139, 150, 0.53);">
                       ·
@@ -38,8 +40,7 @@
                   </span>
                   <a class="font-weight-light text-info badge"
                      href="#editor" @click="replyComment(comment,index)">
-                    <span class="fa fa-mail-reply"> 回复</span>
-                  </a>
+                    <span class="fa fa-mail-reply"> 回复</span></a>
                   <span class="ml-2 text-info badge comment-index">#{{index}}</span>
                 </div>
                 <div
@@ -57,7 +58,7 @@
           <li :class="[comments.currentPage===1 ? 'page-item disabled' : 'page-item']">
             <a
                 class="page-link"
-                href="javascript:"
+                href="javascript:;"
                 @click="commentsNextPage(comments.currentPage-1)">
               上一页
             </a>
@@ -73,7 +74,7 @@
               :class="[comments.currentPage===comments.pages ? 'page-item disabled' : 'page-item']">
             <a
                 class="page-link"
-                href="javascript:"
+                href="javascript:;"
                 @click="commentsNextPage(comments.currentPage+1)"
             >
               下一页
@@ -118,8 +119,8 @@
 </template>
 
 <script>
-import {timeDifference} from '~/utils/time_diffrent.js';
-import {mapState, mapGetters} from 'vuex';
+import {timeDifference} from '~/utils/time_diffrent';
+import {mapGetters, mapState} from 'vuex';
 
 export default {
 	name: 'ArticleComment',
@@ -138,7 +139,7 @@ export default {
 				ol: true, // 有序列表
 				ul: true, // 无序列表
 				link: true, // 链接
-				imagelink: false, // 图片链接
+				imagelink: true, // 图片链接
 				code: true, // code
 				table: true, // 表格
 				fullscreen: false, // 全屏编辑
@@ -203,7 +204,7 @@ export default {
 			this.parentId = comment.userId;
 			this.replyIndex = index;
 			this.replyCommentId = comment._id;
-			this.replyUser = `@${comment.commentUserName} #${index}`;
+			this.replyUser = `回复 #${index} @${this.mySelf(comment.userId) ? '我' : comment.commentUserName}`;
 			// TODO 如果是代码或者图片 怎么优化？
 			this.replyContent = comment.content.replace(/<[^>]+>/g, ''); //去掉所有的html标记;
 		},
@@ -246,7 +247,7 @@ export default {
 				if (isReply && !!this.parentId) {
 					comment.parentId = this.parentId;
 					comment.content = this.commentContent.replace(`${this.replyContent}`, '');
-					comment.replyIndex = this.comments.list.length;
+					comment.replyIndex = this.comments.list.length + 1;
 					comment.replyCommentId = this.replyCommentId;
 				}
 			}
@@ -278,6 +279,13 @@ export default {
 				data: formdata,
 				headers: {'Content-Type': 'multipart/form-data'},
 			}).then((res) => {
+				// 第二步.将返回的url替换到文本原位置![...](./0) -> ![...](url)
+				/**
+				 * $vm 指为mavonEditor实例，可以通过如下两种方式获取
+				 * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
+				 * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
+				 */
+				//console.log('评论组件上传图片res.data.url:', res.data.url);
 				this.$refs.md.$img2Url(pos, res.data.url);
 			});
 		},

@@ -2,8 +2,7 @@
   <div class="article">
     <div class="row">
       <div class="cover">
-        <!--<img v-lazy="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">-->
-        <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
+        <img v-lazy="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
     <div class="container">
@@ -37,10 +36,8 @@
           <div class="markdown-body" v-html="articleDetails.content"></div>
         </div>
       </div>
-      <div class="">
-        <div class="">
-          <ArticleComment></ArticleComment>
-        </div>
+      <div class="row">
+        <ArticleComment></ArticleComment>
       </div>
     </div>
   </div>
@@ -76,7 +73,7 @@ export default {
 			promises.push(userDidFavor);
 		}
 		return Promise.all(promises).catch(err => {
-			error({statusCode: err.status, message: err.statusText});
+			error({statusCode: 500, message: err});
 		});
 	},
 	head() {
@@ -150,7 +147,7 @@ export default {
       content: attr(data-text);
       color: #FFF;
     }
-    
+  
     /*.background {
       width: 100%;
       height: 800px;
@@ -158,7 +155,7 @@ export default {
       background-size: 100% 100%;
     }*/
   }
-  
+
   /*手机端*/
   @media (max-width: 999px) {
     /*.background {

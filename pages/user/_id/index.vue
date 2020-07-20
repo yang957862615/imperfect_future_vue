@@ -2,7 +2,7 @@
   <div role="main">
     <div class="container" ref="cropperContainer" style="display: none;">
       <div>
-        <vue-cropper
+        <vueCropper
             style="height: 300px;"
             ref="cropper"
             :img="imgCropper.img"
@@ -19,7 +19,7 @@
             :centerBox="imgCropper.centerBox"
             :info="true"
         >
-        </vue-cropper>
+        </vueCropper>
       </div>
       <div class="btn-group-sm text-center mt-2 mb-2">
         <button type="button" class="btn btn-primary" @click="confirmCropper">确认</button>
@@ -75,17 +75,14 @@
     <div class="container" v-if="!!loggedUser && myself">
       <nav class="pl-3 pb-2">
         <div class="nav nav-tabs" id="nav-tab">
-          <a @click="changeType(1)" :class="[viewType === 1 ? 'nav-link active' : 'nav-link']" href="javascript:">
+          <a @click="changeType(1)" :class="[viewType === 1 ? 'nav-link active' : 'nav-link']" href="javascript:;">
             我的发布 <span class="ml-2 text-info badge comment-index">{{articleList.length}}</span>
           </a>
-          <a @click="changeType(2)" :class="[viewType === 2 ? 'nav-link active' : 'nav-link']" href="javascript:">
+          <a @click="changeType(2)" :class="[viewType === 2 ? 'nav-link active' : 'nav-link']" href="javascript:;">
             我的收藏 <span class="ml-2 text-info badge comment-index">{{favorArticleList.length}}</span>
           </a>
-          <a @click="changeType(3)" :class="[viewType === 3 ? 'nav-link active' : 'nav-link']" href="javascript:">
+          <a @click="changeType(3)" :class="[viewType === 3 ? 'nav-link active' : 'nav-link']" href="javascript:;">
             我的关注 <span class="ml-2 text-info badge comment-index">{{userFollowedUsers.length}}</span>
-          </a>
-          <a @click="changeType(4)" :class="[viewType === 4 ? 'nav-link active' : 'nav-link']" href="javascript:">
-            关注我的 <span class="ml-2 text-info badge comment-index">{{userFollowedUsers.length}}</span>
           </a>
         </div>
       </nav>
@@ -234,9 +231,9 @@ export default {
 			const followedUsers = store.dispatch('userFollowedUsers', {userId});
 			promises.push(favorArticles, followedUsers);
 		}
-		return Promise.all(promises).catch(err => {
-			error({statusCode: err.status, message: err.statusText});
-		});
+		return Promise.all(promises).catch(err =>
+			error({statusCode: 500, message: err})
+		);
 	},
 	computed: {
 		myself() {
@@ -291,8 +288,6 @@ export default {
 				this.$store.dispatch('userFavorArticles', params);
 			} else if (Object.is(this.viewType, 3)) {
 				this.$store.dispatch('userFollowedUsers', params);
-			} else if (Object.is(this.viewType, 4)) {
-				this.$store.dispatch('userFollowedUsers', params);
 			}
 		},
 		// 滚动加载下一页文章
@@ -304,8 +299,6 @@ export default {
 				} else if (Object.is(this.viewType, 2)) {
 					this.scrollToMoreArticles(this.nextPageParam.favorArticlePageNo, $state);
 				} else if (Object.is(this.viewType, 3)) {
-					this.scrollToMoreArticles(this.nextPageParam.followedUserPageNo, $state);
-				} else if (Object.is(this.viewType, 4)) {
 					this.scrollToMoreArticles(this.nextPageParam.followedUserPageNo, $state);
 				}
 			}, 1000);
@@ -336,7 +329,7 @@ export default {
 				return this.$axios.post(url, param, config).then(res => {
 					// 修改用户头像路径
 					// see this:
-					// https://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&mid=209354478&idx=1&sn=edd70e826b6f9e8a570024f431c5f7fe&scene=1&key=c76941211a49ab58efed75a0405e3ca61338642103fe9eabf8528d801906e4522737274eecca5489d635a5c1aa5d8b12&ascene=0&uin=MTYxMDY3MjU1&devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.10.4+build(14E46)&version=11020113&pass_ticket=ws1Ar8vSXgH8%2FuRvUaFkiKCA57pR8100%2BhwA5Ifuc00%3D
+					// https://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&mid=209354478&idx=1&sn=edd70e826b6f9e8a570024f431c5f7fe&scene=1&key=c76941211a49ab58efed75a0405e3ca61338952103fe9eabf8528d801906e4522737274eecca5489d635a5c1aa5d8b12&ascene=0&uin=MTYxMDY3MjU1&devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.10.4+build(14E46)&version=11020113&pass_ticket=ws1Ar8vSXgH8%2FuRvUaFkiKCA57pR8100%2BhwA5Ifuc00%3D
 					// 这才是一个正常的composing promises调用链
 					let modifyUrl = imperfectApi.userApi.modifyUserInfo();
 					return this.$axios.post(modifyUrl,
@@ -464,7 +457,7 @@ export default {
     color: #fff;
     background: rgba(0, 0, 0, 0.8);
   }
-  
+
   .no-overflow {
     overflow: hidden;
   }
