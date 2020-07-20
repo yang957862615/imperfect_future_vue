@@ -68,8 +68,6 @@ module.exports = {
 	vendor: [
 		'vue-cropper'
 	],
-	// TODO server-side时cookie拿不到
-	// mode: "spa",
 	plugins: [
 		{src: '~/plugins/mavonEditor.js', ssr: false},
 		{src: '~/plugins/vueLazyload.js', ssr: false},

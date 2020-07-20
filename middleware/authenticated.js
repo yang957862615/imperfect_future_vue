@@ -3,6 +3,6 @@
  */
 export default function ({req, store, redirect, route}) {
   if (!store.getters.isAuthenticated) { // 没有登录则跳转到登录页面
-    redirect(`/auth/sign-in?redirect=${route.path}`)
+    return redirect(`/auth/sign-in?redirect=${route.path}`);
   }
 }
