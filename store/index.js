@@ -2,6 +2,7 @@
 import {getToken, setToken, unsetToken} from '../utils/auth.js';
 import imperfectApi from '../api/index';
 import cookieParser from 'cookieparser';
+import Cookie from 'js-cookie';
 
 /**
  * 貌似getter写在index里才能取到，暂时先这样。
@@ -37,7 +38,7 @@ export const actions = {
 				]).catch(err => {
 					console.log('加载用户信息错误err:', err);
 					// 如果token已过期则删除token以免一直去查redis然后一直报错
-					unsetToken();
+					Cookie.remove('token');
 					commit('user/CLEAR_USER_TOKEN');
 				});
 			}
@@ -138,6 +139,7 @@ export const actions = {
 		}).catch(err => {
 			console.log('查询是否点赞err:', err);
 			commit('user/USER_DID_FAVOR', false);
+			return Promise.reject(err);
 		});
 	},
 	// 文章点击数、评论数、点赞数等
@@ -157,6 +159,7 @@ export const actions = {
 		}).catch(err => {
 			console.log('获取文章信息err:', err);
 			commit('article/ARTICLE_INFO', data);
+			return Promise.reject(err);
 		});
 	},
 	// 检查是否关注
@@ -215,13 +218,14 @@ export const actions = {
 	jwtUserInfo({commit}, params = {}) {
 		//console.log('redisUserInfo执行+1');
 		const token = getToken() ? getToken() : params;
+		console.log('token=', token);
 		let url = imperfectApi.userApi.jwtUserInfo(token);
 		return this.$axios.post(url, token).then(res => {
 			// 已经登录
 			commit('user/USER_INFO', res.data.ob);
 		}).catch(err => {
 			console.log('获取jwt里的用户信息err:', err);
-			unsetToken();
+			Cookie.remove('token');
 			commit('user/CLEAR_USER_TOKEN');
 			return Promise.reject(err);
 		});
@@ -246,10 +250,7 @@ export const actions = {
 					}
 				}
 			}
-		).catch((error) => {
-			console.log('加载已关注人列表error:', error);
-			return Promise.reject('加载已关注人列表error: ' + error);
-		});
+		);
 	},
 	// 用户收藏文章
 	userFavorArticles({commit}, {pageNo, userId, $state}) {
@@ -270,9 +271,6 @@ export const actions = {
 					$state.complete();
 				}
 			}
-		}).catch((error) => {
-			console.log('加载收藏文章列表error:', error);
-			return Promise.reject('加载收藏文章列表error: ' + error);
 		});
 	},
 	// 用户首页加载用户基本信息和用户所有文章
@@ -394,7 +392,7 @@ export const actions = {
 			return ndata;
 		}
 
-		// base64转成bolb对象
+		// base64转成blob对象
 		function dataURItoBlob(base64Data) {
 			let byteString;
 			if (base64Data.split(',')[0].indexOf('base64') >= 0)

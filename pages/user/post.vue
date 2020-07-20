@@ -88,7 +88,7 @@ export default {
 	head: {
 		title: '发表文章'
 	},
-	middleware: 'authenticated',
+	middleware: 'notAuthenticated',
 	components: {
 		ArticleImgUpload
 	},

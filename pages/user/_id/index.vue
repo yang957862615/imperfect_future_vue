@@ -75,14 +75,17 @@
     <div class="container" v-if="!!loggedUser && myself">
       <nav class="pl-3 pb-2">
         <div class="nav nav-tabs" id="nav-tab">
-          <a @click="changeType(1)" :class="[viewType === 1 ? 'nav-link active' : 'nav-link']" href="javascript:;">
-            我的发布
+          <a @click="changeType(1)" :class="[viewType === 1 ? 'nav-link active' : 'nav-link']" href="javascript:">
+            我的发布 <span class="ml-2 text-info badge comment-index">{{articleList.length}}</span>
           </a>
-          <a @click="changeType(2)" :class="[viewType === 2 ? 'nav-link active' : 'nav-link']" href="javascript:;">
-            我的收藏
+          <a @click="changeType(2)" :class="[viewType === 2 ? 'nav-link active' : 'nav-link']" href="javascript:">
+            我的收藏 <span class="ml-2 text-info badge comment-index">{{favorArticleList.length}}</span>
           </a>
-          <a @click="changeType(3)" :class="[viewType === 3 ? 'nav-link active' : 'nav-link']" href="javascript:;">
-            我的关注
+          <a @click="changeType(3)" :class="[viewType === 3 ? 'nav-link active' : 'nav-link']" href="javascript:">
+            我的关注 <span class="ml-2 text-info badge comment-index">{{userFollowedUsers.length}}</span>
+          </a>
+          <a @click="changeType(4)" :class="[viewType === 4 ? 'nav-link active' : 'nav-link']" href="javascript:">
+            关注我的 <span class="ml-2 text-info badge comment-index">{{userFollowedUsers.length}}</span>
           </a>
         </div>
       </nav>
@@ -107,33 +110,43 @@
         </div>
         <div v-show="viewType===3" class="pl-3 tab-pane fade show active">
           <!--已关注的用户-->
-          <div id="columns">
-            <figure
-                v-for="(user,index) in userFollowedUsers"
-                :key="index"
-                class="animated fadeInDown"
-            >
-              <img
-                  class="card-img-top p-2"
-                  v-lazy="user.headImg"
-                  alt="Card image cap"
-              >
-              <figcaption>
-                <div class="card-body">
-                  <p class="card-text">
-                    {{user.description}}
-                  </p>
-                  <div class="d-flex justify-content-between mt-3">
-                    <small class="text-muted">
-                      <nuxt-link :to="`/user/${user.userId}`" class="badge">
-                        {{user.username}}
-                      </nuxt-link>
-                    </small>
-                  </div>
-                </div>
-              </figcaption>
-            </figure>
-          </div>
+          <ul class="list-unstyled p-3"
+              v-for="(user,index) in userFollowedUsers"
+              :key="index">
+            <li class="media">
+              <img :src="user.headImg" class="rounded-circle" style="min-width: 64px;max-width: 64px;" alt="headImg">
+              <div class="media-body p-2">
+                <h5 class="mt-0 mb-1">{{user.description}}</h5>
+                <nuxt-link :to="`/user/${user.userId}`" class="badge">
+                  {{user.username}}
+                </nuxt-link>
+              </div>
+            </li>
+          </ul>
+          <infinite-loading :identifier="infiniteId" ref="infiniteLoading" @infinite="infiniteHandler">
+              <span slot="no-more">
+                没有更多数据啦 :(
+              </span>
+            <span slot="no-results">
+                没有更多数据啦 :(
+              </span>
+          </infinite-loading>
+        </div>
+        <div v-show="viewType===4" class="pl-3 tab-pane fade show active">
+          <!--已关注的用户-->
+          <ul class="list-unstyled p-3"
+              v-for="(user,index) in userFollowedUsers"
+              :key="index">
+            <li class="media">
+              <img :src="user.headImg" class="rounded-circle" style="min-width: 64px;max-width: 64px;" alt="headImg">
+              <div class="media-body p-2">
+                <h5 class="mt-0 mb-1">{{user.description}}</h5>
+                <nuxt-link :to="`/user/${user.userId}`" class="badge">
+                  {{user.username}}
+                </nuxt-link>
+              </div>
+            </li>
+          </ul>
           <infinite-loading :identifier="infiniteId" ref="infiniteLoading" @infinite="infiniteHandler">
               <span slot="no-more">
                 没有更多数据啦 :(
@@ -278,6 +291,8 @@ export default {
 				this.$store.dispatch('userFavorArticles', params);
 			} else if (Object.is(this.viewType, 3)) {
 				this.$store.dispatch('userFollowedUsers', params);
+			} else if (Object.is(this.viewType, 4)) {
+				this.$store.dispatch('userFollowedUsers', params);
 			}
 		},
 		// 滚动加载下一页文章
@@ -289,6 +304,8 @@ export default {
 				} else if (Object.is(this.viewType, 2)) {
 					this.scrollToMoreArticles(this.nextPageParam.favorArticlePageNo, $state);
 				} else if (Object.is(this.viewType, 3)) {
+					this.scrollToMoreArticles(this.nextPageParam.followedUserPageNo, $state);
+				} else if (Object.is(this.viewType, 4)) {
 					this.scrollToMoreArticles(this.nextPageParam.followedUserPageNo, $state);
 				}
 			}, 1000);
@@ -319,7 +336,7 @@ export default {
 				return this.$axios.post(url, param, config).then(res => {
 					// 修改用户头像路径
 					// see this:
-					// https://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&mid=209354478&idx=1&sn=edd70e826b6f9e8a570024f431c5f7fe&scene=1&key=c76941211a49ab58efed75a0405e3ca61338952103fe9eabf8528d801906e4522737274eecca5489d635a5c1aa5d8b12&ascene=0&uin=MTYxMDY3MjU1&devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.10.4+build(14E46)&version=11020113&pass_ticket=ws1Ar8vSXgH8%2FuRvUaFkiKCA57pR8100%2BhwA5Ifuc00%3D
+					// https://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&mid=209354478&idx=1&sn=edd70e826b6f9e8a570024f431c5f7fe&scene=1&key=c76941211a49ab58efed75a0405e3ca61338642103fe9eabf8528d801906e4522737274eecca5489d635a5c1aa5d8b12&ascene=0&uin=MTYxMDY3MjU1&devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.10.4+build(14E46)&version=11020113&pass_ticket=ws1Ar8vSXgH8%2FuRvUaFkiKCA57pR8100%2BhwA5Ifuc00%3D
 					// 这才是一个正常的composing promises调用链
 					let modifyUrl = imperfectApi.userApi.modifyUserInfo();
 					return this.$axios.post(modifyUrl,

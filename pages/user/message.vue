@@ -147,7 +147,7 @@
     head: {
       title: '消息中心'
     },
-    middleware: 'authenticated',
+    middleware: 'notAuthenticated',
     data() {
       return {
         msgType: 1,

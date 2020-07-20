@@ -118,10 +118,15 @@
 <script>
 import {mapGetters} from 'vuex';
 import apiBaseURL from '~/api.config';
+import Cookie from 'js-cookie';
+import Stomp from 'stompjs';
 
 export default {
 	data() {
-		return {};
+		return {
+			stompClient: '',
+			timer: '',
+		};
 	},
 	computed: {
 		...mapGetters(['loggedUser', 'userUnReadMsgCount']),
@@ -194,48 +199,52 @@ export default {
 			return this.$store.dispatch('userLoginOut').then(res => {
 				layer.msg('注销成功', {time: 1000, icon: 1});
 				// 断开webSocket
-				this.webSocket.close();
+				Cookie.remove('auth');
+				this.disconnect();
 				router.push({path: '/'});
 			}).catch(err => {
 				layer.msg('请稍后重试', {time: 1500, icon: 7});
 			});
 		},
-		initWebSocket(userId) {
-			if (!userId) {
-				return;
-			}
-			// 初始化msgList
+		initWebSocket() {
+			this.connection();
+		},
+		connection() {
+			// 建立连接对象
 			let wsuri = '';
 			if (apiBaseURL.indexOf('https://') > -1) {
-				wsuri = `wss://${apiBaseURL.replace('https://', '')}webSocket/${userId}`;
+				wsuri = `wss://${apiBaseURL.replace('https://', '')}webSocket/wss`;
 			} else if (apiBaseURL.indexOf('http://') > -1) {
-				wsuri = `ws://${apiBaseURL.replace('http://', '')}webSocket/${userId}`;
+				wsuri = `ws://127.0.0.1:15674/ws`;
 			}
-			// 这里面的this都指向vue
-			this.webSocket.onopen = this.webSocketOpen;
-			this.webSocket.onmessage = this.webSocketOnMessage;
-			this.webSocket.onclose = this.webSocketClose;
-			this.webSocket.onerror = this.webSocketError;
+			this.socket = new WebSocket(wsuri);
+			// 获取STOMP子协议的客户端对象
+			this.stompClient = Stomp.over(this.socket);
+			let headers = {
+				'login': 'guest',
+				'passcode': 'guest',
+			};
+			// 向服务器发起websocket连接
+			this.stompClient.connect(headers, () => {
+				// 订阅服务端提供的某个topic
+				this.stompClient.subscribe('postArticle', msg => {
+					// msg.body存放的是服务端发送给我们的信息
+					console.log('接收成功=' + msg.body);
+					if (!!msg.body) {
+						this.$store.commit('message/USER_NEW_MSGS', msg.body);
+					}
+				}, headers);
+			}, err => {
+				// 连接发生错误时的处理函数
+				console.log('失败:' + err);
+			});
 		},
-		webSocketOpen() {
-			// 打开连接
-			console.log('WebSocket连接成功');
-		},
-		webSocketOnMessage(e) {
-			// 接收消息
-			//console.log("服务器推送消息：", e.data);
-			if (!!e) {
-				this.$store.commit('message/USER_NEW_MSGS', e.data);
+		disconnect() {
+			// 断开连接
+			if (this.stompClient) {
+				this.stompClient.disconnect();
 			}
 		},
-		webSocketClose() {
-			// 关闭连接
-			console.log('WebSocket关闭');
-		},
-		webSocketError() {
-			// 连接失败
-			console.log('WebSocket连接失败');
-		}
 	}
 };
 </script>

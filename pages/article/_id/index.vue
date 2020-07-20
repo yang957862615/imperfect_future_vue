@@ -2,7 +2,8 @@
   <div class="article">
     <div class="row">
       <div class="cover">
-        <img v-lazy="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
+        <!--<img v-lazy="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">-->
+        <img :src="articleDetails.imgUrl" class="img-fluid" alt="文章封面" style="object-fit: cover;">
       </div>
     </div>
     <div class="container">
@@ -32,12 +33,14 @@
         </div>
       </div>
       <div class="article-content">
-        <div class="row ">
+        <div class="row">
           <div class="markdown-body" v-html="articleDetails.content"></div>
         </div>
       </div>
-      <div class="row">
-        <ArticleComment></ArticleComment>
+      <div class="">
+        <div class="">
+          <ArticleComment></ArticleComment>
+        </div>
       </div>
     </div>
   </div>

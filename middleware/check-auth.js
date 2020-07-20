@@ -11,5 +11,5 @@ export default function ({store, req}) {
   // 已登录不加载用户信息
   if (store.getters.isAuthenticated) return;
   // 加载用户信息
-  store.dispatch("jwtUserInfo").catch(err => console.log('加载用户信息err:', err));
+  store.dispatch('jwtUserInfo');
 }

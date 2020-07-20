@@ -57,7 +57,7 @@
           <li :class="[comments.currentPage===1 ? 'page-item disabled' : 'page-item']">
             <a
                 class="page-link"
-                href="javascript:;"
+                href="javascript:"
                 @click="commentsNextPage(comments.currentPage-1)">
               上一页
             </a>
@@ -73,7 +73,7 @@
               :class="[comments.currentPage===comments.pages ? 'page-item disabled' : 'page-item']">
             <a
                 class="page-link"
-                href="javascript:;"
+                href="javascript:"
                 @click="commentsNextPage(comments.currentPage+1)"
             >
               下一页
@@ -83,13 +83,17 @@
       </nav>
       <div id="editor">
         <div class="form-group" v-show="parentId">
-          <a href="javascript:;" @click="closeReply" class="float-right">X</a>
-          <input type="text" class="form-control" v-model="replyUser" disabled>
-          <textarea class="form-control" v-model="replyContent" disabled></textarea>
+          <a href="javascript:" @click="closeReply" class="float-right">X</a>
+          <label>
+            <input type="text" class="form-control" v-model="replyUser" disabled>
+          </label>
+          <label>
+            <textarea class="form-control" v-model="replyContent" disabled></textarea>
+          </label>
         </div>
         <mavon-editor
             class="v-note-wrapper markdown-body"
-            style="min-height: 400px;min-width: 100%;"
+            style="min-height: 250px;min-width: 100%;"
             ref=md
             :toolbars="toolbars"
             :defaultOpen="'edit'"

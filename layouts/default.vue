@@ -9,20 +9,19 @@
     </keep-alive>
     <!---->
     <!--<Footer></Footer>-->
-    <vm-back-top :duration="500"></vm-back-top>
+    <vm-back-top :duration="300"></vm-back-top>
   </div>
 </template>
 
 <script>
-  import Header from '~/components/layout/Header.vue'
-  import Footer from '~/components/layout/Footer.vue'
-  import {getToken} from '~/utils/auth.js'
+import Header from '~/components/layout/Header.vue';
+import Footer from '~/components/layout/Footer.vue';
 
-  export default {
-    head: {},
-    components: {
-      Header,
-      Footer
-    },
-  }
+export default {
+	head: {},
+	components: {
+		Header,
+		Footer
+	},
+};
 </script>
