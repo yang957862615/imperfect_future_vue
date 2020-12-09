@@ -1,9 +1,10 @@
 FROM node:alpine
 
-RUN mkdir -p /app/src
-COPY ./src /app/src
-WORKDIR /app/src
+RUN mkdir -p /app
+COPY . /app
+WORKDIR /app
 
+ENV NODE_ENV=production
 ENV HOST "0.0.0.0"
 
 RUN sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_REPOSITORIES}/g" /etc/apk/repositories
